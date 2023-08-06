@@ -1,8 +1,8 @@
 locals {
-  network_domains = ["Dev", "QA", "Prod", "Azure", "Edge"]
+  public_key = fileexists("~/.ssh/id_rsa.pub") ? "${file("~/.ssh/id_rsa.pub")}" : var.public_key
 
   regional_spokes = flatten([
-    for region in local.transit_firenet : [
+    for region in local.backbone : [
       for avx_account, spokes in region.department_spokes : [
         for spoke in spokes : {
           region       = region.transit_region_name
@@ -15,7 +15,7 @@ locals {
     ]
   ])
 
-  transit_firenet = {
+  backbone = {
     ("aws_${replace(lower(var.transit_aws_palo_firenet_region), "/[ -]/", "_")}") = {
       department_spokes = {
         (var.aws_accounting_account_name) = ["dev", "qa", "prod"]
@@ -50,7 +50,7 @@ locals {
     },
     ("oci_${replace(lower(var.transit_oci_region), "/[ -]/", "_")}") = {
       department_spokes = {
-        (var.oci_operations_account_name) = ["dev", "qa", "prod"]
+        (var.oci_operations_account_name) = ["shared"]
       }
       transit_account       = var.oci_operations_account_name
       transit_name          = "transit-oci-${var.transit_oci_region}"
@@ -74,46 +74,103 @@ locals {
       transit_instance_size = "n1-standard-1"
       transit_ha_gw         = false
     },
-    ("aws_${replace(lower(var.transit_aws_egress_fqdn_region), "/[ -]/", "_")}") = {
+    ("aws_${replace(lower(var.transit_aws_region), "/[ -]/", "_")}") = {
       department_spokes = {
         (var.aws_engineering_account_name) = ["dev", "qa", "prod"]
       }
-      transit_account        = var.aws_operations_account_name
-      transit_name           = "transit-aws-${var.transit_aws_egress_fqdn_region}"
-      transit_cloud          = "aws"
-      transit_cidr           = "10.5.0.0/23"
-      transit_region_name    = var.transit_aws_egress_fqdn_region
-      transit_asn            = 65105
-      transit_instance_size  = "c5.xlarge"
-      transit_ha_gw          = false
-      firenet                = true
-      firenet_firewall_image = "Aviatrix FQDN Egress Filtering"
-      firenet_single_ip_snat = true
+      transit_account       = var.aws_operations_account_name
+      transit_name          = "transit-aws-${var.transit_aws_region}"
+      transit_cloud         = "aws"
+      transit_cidr          = "10.5.0.0/23"
+      transit_region_name   = var.transit_aws_region
+      transit_asn           = 65105
+      transit_instance_size = "t3.medium"
+      transit_ha_gw         = false
+      firenet               = false
     },
   }
 
-  egress_rules = {
-    tcp = {
-      "*.amazonaws.com"    = "443"
-      "*.amazonaws.com"    = "80"
-      "aviatrix.com"       = "443"
-      "*.aviatrix.com"     = "443"
-      "*.amazon.com"       = "443"
-      "*.amazon.com"       = "80"
-      "stackoverflow.com"  = "443"
-      "go.dev"             = "443"
-      "*.terraform.io"     = "443"
-      "*.microsoft.com"    = "443"
-      "*.google.com"       = "443"
-      "*.oracle.com"       = "443"
-      "*.alibabacloud.com" = "443"
-      "*.docker.com"       = "443"
-      "*.snapcraft.io"     = "443"
-      "*.ubuntu.com"       = "443"
-      "*.ubuntu.com"       = "80"
+  edge_prefix = "sv-metro-equinix-demo"
+
+  external = [
+    "aws.amazon.com",
+    "azure.microsoft.com/en-us",
+    "cloud.google.com",
+    "www.oracle.com/cloud",
+    "us.alibabacloud.com",
+    "aviatrix.com",
+    "ransomware.org",
+    "malware.net",
+    "botnet.com"
+  ]
+
+  apps   = [for d in local.traffic_gen : d.name if !contains([d.name], "data") || !contains([d.name], "shared")]
+  data   = [for d in local.traffic_gen : d.name if contains([d.name], "data")]
+  shared = [for d in local.traffic_gen : d.name if contains([d.name], "shared")]
+
+  traffic_gen = {
+    accounting_dev = {
+      # TODO: Calculate possibly changing region label
+      private_ip = cidrhost(cidrsubnet("${trimsuffix(local.backbone.aws_us_east_1.transit_cidr, "23")}16", 8, 2), 10)
+      name       = "accounting-app-dev"
+      interval   = "10"
     }
-    udp = {
-      "dns.google.com" = "53"
+    accounting_qa = {
+      private_ip = cidrhost(cidrsubnet("${trimsuffix(local.backbone.aws_us_east_1.transit_cidr, "23")}16", 8, 3), 10)
+      name       = "accounting-app-qa"
+      interval   = "15"
+    }
+    accounting_prod = {
+      private_ip = cidrhost(cidrsubnet("${trimsuffix(local.backbone.aws_us_east_1.transit_cidr, "23")}16", 8, 4), 10)
+      name       = "accounting-app-prod"
+      interval   = "5"
+    }
+    engineering_dev = {
+      private_ip = cidrhost(cidrsubnet("${trimsuffix(local.backbone.aws_us_east_2.transit_cidr, "23")}16", 8, 2), 10)
+      name       = "engineering-app-dev"
+      interval   = "10"
+    }
+    engineering_qa = {
+      private_ip = cidrhost(cidrsubnet("${trimsuffix(local.backbone.aws_us_east_2.transit_cidr, "23")}16", 8, 3), 10)
+      name       = "engineering-app-qa"
+      interval   = "15"
+    }
+    engineering_prod = {
+      private_ip = cidrhost(cidrsubnet("${trimsuffix(local.backbone.aws_us_east_2.transit_cidr, "23")}16", 8, 4), 10)
+      name       = "engineering-app-prod"
+      interval   = "5"
+    }
+    marketing_dev = {
+      private_ip = cidrhost(cidrsubnet("${trimsuffix(local.backbone.azure_north_europe.transit_cidr, "23")}16", 8, 2), 40)
+      name       = "marketing-app-dev"
+      interval   = "10"
+    }
+    marketing_qa = {
+      private_ip = cidrhost(cidrsubnet("${trimsuffix(local.backbone.azure_north_europe.transit_cidr, "23")}16", 8, 2), 70)
+      name       = "marketing-app-qa"
+      interval   = "15"
+    }
+    marketing_prod = {
+      private_ip = cidrhost(cidrsubnet("${trimsuffix(local.backbone.azure_north_europe.transit_cidr, "23")}16", 8, 2), 100)
+      name       = "marketing-app-prod"
+      interval   = "5"
+    }
+    operations_shared = {
+      private_ip = cidrhost(cidrsubnet("${trimsuffix(local.backbone.oci_ap_singapore_1.transit_cidr, "23")}16", 8, 2), 20)
+      name       = "operations-app-shared"
+      interval   = "10"
+    }
+    enterprise_data_dev = {
+      private_ip = cidrhost(cidrsubnet("${trimsuffix(local.backbone.gcp_us_west1.transit_cidr, "23")}16", 8, 2), 10)
+      name       = "enterprise-data-dev"
+    }
+    enterprise_data_qa = {
+      private_ip = cidrhost(cidrsubnet("${trimsuffix(local.backbone.gcp_us_west1.transit_cidr, "23")}16", 8, 3), 10)
+      name       = "enterprise-data-qa"
+    }
+    enterprise_data_prod = {
+      private_ip = cidrhost(cidrsubnet("${trimsuffix(local.backbone.gcp_us_west1.transit_cidr, "23")}16", 8, 4), 10)
+      name       = "enterprise-data-prod"
     }
   }
 }
@@ -150,6 +207,10 @@ variable "oci_operations_account_name" {
   description = "Oci access account name for the operations department"
 }
 
+variable "workload_template_path" {
+  description = "Path to the workload templates"
+}
+
 variable "palo_bootstrap_path" {
   description = "Path to the palo bootstrap files"
 }
@@ -166,13 +227,17 @@ variable "palo_admin_password" {
   description = "Palo alto console admin password"
 }
 
+variable "workload_instance_password" {
+  description = "Password for the workload instances"
+}
+
 variable "transit_aws_palo_firenet_region" {
   description = "Aws transit region with palo alto firenet"
   default     = "us-east-1"
 }
 
-variable "transit_aws_egress_fqdn_region" {
-  description = "Aws transit region with avx egress fqdn"
+variable "transit_aws_region" {
+  description = "Aws transit region"
   default     = "us-east-2"
 }
 
@@ -189,4 +254,40 @@ variable "transit_gcp_region" {
 variable "transit_oci_region" {
   description = "Oci transit region"
   default     = "ap-singapore-1"
+}
+
+variable "edge_gcp_region" {
+  description = "Edge gcp region"
+  default     = "us-south1"
+}
+
+variable "edge_prefix" {
+  description = "Edge gateway prefix"
+  default     = "sv-metro-demo-equinix"
+}
+
+variable "public_key" {
+  description = "SSH public key to apply to all deployed instances"
+}
+
+variable "private_key_full_path" {
+  description = "SSH private key to be used to connect to all deployed instances"
+}
+
+variable "oci_operations_compartment_ocid" {
+  description = "Access account compartment ocid for the oci account for the operations department"
+}
+
+variable "common_tags" {
+  description = "Optional tags to be applied to all resources"
+  default     = {}
+}
+
+variable "dashboard_public_cert" {
+  description = "Public key certificate for the connectivity dashboard"
+  default     = {}
+}
+variable "dashboard_private_key" {
+  description = "Private key certificate for the connectivity dashboard"
+  default     = {}
 }

@@ -1,7 +1,7 @@
 resource "aws_wafv2_web_acl" "public" {
   name  = aws_lb.public.name
   scope = "REGIONAL"
-  tags  = var.common_tags
+  tags  = local.tfvars.common_tags
 
   default_action {
     allow {}

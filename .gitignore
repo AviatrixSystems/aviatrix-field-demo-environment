@@ -35,3 +35,7 @@ override.tf.json
 legacy/
 *.json
 palo_bootstrap/*
+*.qcow2
+*host-vm*/*
+ssh/*
+equinix/*cloud-init*

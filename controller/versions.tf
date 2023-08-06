@@ -1,9 +1,9 @@
 terraform {
   backend "s3" {
-    bucket  = "tf.aviatrixlab.com"
-    key     = "demo/terraform.tfstate"
-    region  = "us-east-2"
-    profile = "pod1"
+    bucket  = "demo.aviatrixtest.com"
+    key     = "terraform/controller.tfstate"
+    region  = "us-west-2"
+    profile = "demo_operations"
   }
 
   required_providers {

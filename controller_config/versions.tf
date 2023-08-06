@@ -1,15 +1,15 @@
 terraform {
   backend "s3" {
-    bucket  = "tf.aviatrixlab.com"
-    key     = "demo/terraform-controller-config.tfstate"
-    region  = "us-east-2"
-    profile = "pod1"
+    bucket  = "demo.aviatrixtest.com"
+    key     = "terraform/controller-config.tfstate"
+    region  = "us-west-2"
+    profile = "demo_operations"
   }
 
   required_providers {
     aviatrix = {
       source  = "aviatrixsystems/aviatrix"
-      version = "~> 3.0.0"
+      version = "~> 3.1.0"
     }
     http-full = {
       source  = "salrashid123/http-full"

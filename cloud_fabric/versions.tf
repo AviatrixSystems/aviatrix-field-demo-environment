@@ -1,27 +1,22 @@
 terraform {
-  backend "s3" {
-    bucket  = "demo.aviatrixtest.com"
-    key     = "terraform/cloud-fabric.tfstate"
-    region  = "us-west-2"
-    profile = "demo_operations"
-  }
-
   required_providers {
     aviatrix = {
       source  = "aviatrixsystems/aviatrix"
       version = "~> 3.1.0"
     }
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 4.54.0"
-    }
     azurerm = {
       source  = "hashicorp/azurerm"
       version = "~> 3.43.0"
     }
+    aws = {
+      source                = "hashicorp/aws"
+      version               = "~> 4.54.0"
+      configuration_aliases = [aws.accounting, aws.engineering, aws.palo]
+    }
     google = {
-      source  = "hashicorp/google"
-      version = "~> 4.52.0"
+      source                = "hashicorp/google"
+      version               = "~> 4.52.0"
+      configuration_aliases = [google.operations]
     }
     oci = {
       source  = "hashicorp/oci"

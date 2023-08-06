@@ -32,9 +32,9 @@ resource "aws_route53_record" "cplt" {
 resource "aws_security_group" "public_alb" {
   name        = "aviatrix-public"
   description = "Allow http inbound traffic"
-  vpc_id      = module.aviatrix_controller_aws.vpc_id
+  vpc_id      = aws_cloudformation_stack.avx_ctrl_cplt.outputs.AviatrixVpcID
 
-  tags = merge(var.common_tags, {
+  tags = merge(local.tfvars.common_tags, {
     Name = "aviatrix-public"
   })
 }
@@ -69,18 +69,8 @@ resource "aws_security_group_rule" "public_egress_ctl" {
   security_group_id = aws_security_group.public_alb.id
 }
 
-# resource "aws_security_group_rule" "public_egress_80" {
-#   type              = "egress"
-#   description       = "Allows 80 outbound"
-#   from_port         = 80
-#   to_port           = 80
-#   protocol          = "tcp"
-#   cidr_blocks       = ["0.0.0.0/0"]
-#   security_group_id = aws_security_group.public_alb.id
-# }
-
 resource "aws_subnet" "controller_subnet_b" {
-  vpc_id            = module.aviatrix_controller_aws.vpc_id
+  vpc_id            = aws_cloudformation_stack.avx_ctrl_cplt.outputs.AviatrixVpcID
   availability_zone = "${var.aws_region}b"
   cidr_block        = "172.64.2.0/24"
 
@@ -89,17 +79,30 @@ resource "aws_subnet" "controller_subnet_b" {
   }
 }
 
+data "aws_route_table" "controller" {
+  filter {
+    name   = "tag:Name"
+    values = ["AviatrixPublicSubnetRouteTable"]
+  }
+  depends_on = [aws_cloudformation_stack.avx_ctrl_cplt]
+}
+
+resource "aws_route_table_association" "controller_subnet_b" {
+  subnet_id      = aws_subnet.controller_subnet_b.id
+  route_table_id = data.aws_route_table.controller.id
+}
+
 resource "aws_lb" "public" {
   name               = "aviatrix-public-alb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = [aws_security_group.public_alb.id]
-  subnets            = [module.aviatrix_controller_aws.subnet_id, aws_subnet.controller_subnet_b.id]
+  subnets            = [aws_cloudformation_stack.avx_ctrl_cplt.outputs.AviatrixSubnetID, aws_subnet.controller_subnet_b.id]
   idle_timeout       = 4000
 
   enable_deletion_protection = false
 
-  tags = merge(var.common_tags, {
+  tags = merge(local.tfvars.common_tags, {
     Name = "aviatrix-public"
   })
 
@@ -182,7 +185,7 @@ resource "aws_alb_target_group" "ctrl" {
   name     = "avx-controller"
   port     = 443
   protocol = "HTTPS"
-  vpc_id   = module.aviatrix_controller_aws.vpc_id
+  vpc_id   = aws_cloudformation_stack.avx_ctrl_cplt.outputs.AviatrixVpcID
 
   health_check {
     protocol = "HTTPS"
@@ -190,7 +193,7 @@ resource "aws_alb_target_group" "ctrl" {
     matcher  = "200"
   }
 
-  tags = merge(var.common_tags, {
+  tags = merge(local.tfvars.common_tags, {
     Name = "aviatrix-controller"
   })
 }
@@ -199,7 +202,7 @@ resource "aws_alb_target_group" "cplt" {
   name     = "avx-copilot"
   port     = 443
   protocol = "HTTPS"
-  vpc_id   = module.aviatrix_controller_aws.vpc_id
+  vpc_id   = aws_cloudformation_stack.avx_ctrl_cplt.outputs.AviatrixVpcID
 
   health_check {
     protocol = "HTTPS"
@@ -207,19 +210,19 @@ resource "aws_alb_target_group" "cplt" {
     matcher  = "200"
   }
 
-  tags = merge(var.common_tags, {
+  tags = merge(local.tfvars.common_tags, {
     Name = "aviatrix-copilot"
   })
 }
 
 resource "aws_alb_target_group_attachment" "ctrl" {
-  target_id        = module.aviatrix_controller_aws.instance_id
+  target_id        = aws_cloudformation_stack.avx_ctrl_cplt.outputs.AviatrixControllerInstanceID
   target_group_arn = aws_alb_target_group.ctrl.arn
   port             = "443"
 }
 
 resource "aws_alb_target_group_attachment" "cplt" {
-  target_id        = module.aviatrix_copilot_aws.ec2-info[0].id
+  target_id        = aws_cloudformation_stack.avx_ctrl_cplt.outputs.AviatrixCoPilotInstanceID
   target_group_arn = aws_alb_target_group.cplt.arn
   port             = "443"
 }
@@ -231,7 +234,7 @@ resource "aws_security_group_rule" "alb_controller" {
   to_port                  = 443
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.public_alb.id
-  security_group_id        = module.aviatrix_controller_aws.security_group_id
+  security_group_id        = aws_cloudformation_stack.avx_ctrl_cplt.outputs.AviatrixControllerSecurityGroupID
 }
 
 resource "aws_security_group_rule" "alb_copilot" {
@@ -241,5 +244,5 @@ resource "aws_security_group_rule" "alb_copilot" {
   to_port                  = 443
   protocol                 = "tcp"
   source_security_group_id = aws_security_group.public_alb.id
-  security_group_id        = tolist(module.aviatrix_copilot_aws.ec2-info[0].vpc_security_group_ids)[0]
+  security_group_id        = aws_cloudformation_stack.avx_ctrl_cplt.outputs.AviatrixCoPilotSecurityGroupID
 }
