@@ -1,7 +1,16 @@
 # https://registry.terraform.io/modules/terraform-aviatrix-modules/backbone/aviatrix/latest
 module "backbone" {
-  source          = "terraform-aviatrix-modules/backbone/aviatrix"
-  version         = "v1.2.0"
+  source  = "terraform-aviatrix-modules/backbone/aviatrix"
+  version = "v1.2.2"
+  global_settings = {
+    transit_accounts = {
+      aws   = var.aws_operations_account_name,
+      azure = var.azure_operations_account_name,
+      gcp   = var.gcp_operations_account_name,
+      oci   = var.oci_operations_account_name,
+    }
+    transit_ha_gw = false
+  }
   transit_firenet = local.backbone
 }
 
