@@ -6,7 +6,7 @@ data "google_compute_image" "ubuntu" {
 resource "google_compute_instance" "this" {
   name         = var.name
   machine_type = var.instance_size
-  zone         = "${var.region}-a"
+  zone         = "${var.region}-b"
 
   boot_disk {
     initialize_params {
@@ -37,7 +37,7 @@ resource "google_compute_instance" "this" {
     name = var.name
   })
 
-  tags = ["instance"]
+  tags = ["instance", "avx-snat-noip"]
   metadata = {
     ssh-keys = fileexists("~/.ssh/id_rsa.pub") ? "ubuntu:${file("~/.ssh/id_rsa.pub")}" : null
   }

@@ -23,9 +23,7 @@ module "accounting_dev" {
       name     = local.traffic_gen.accounting_dev.name
       domain   = "demo.aviatrixtest.com"
       password = var.workload_instance_password
-      apps     = join(",", setsubtract(local.apps, [local.traffic_gen.accounting_dev.name]))
-      data     = join(",", local.data)
-      shared   = join(",", local.shared)
+      apps     = join(",", setsubtract(local.all_workloads, [local.traffic_gen.accounting_dev.name]))
       external = join(",", local.external)
       interval = local.traffic_gen.accounting_dev.interval
   })
@@ -63,9 +61,7 @@ module "accounting_qa" {
       name     = local.traffic_gen.accounting_qa.name
       domain   = "demo.aviatrixtest.com"
       password = var.workload_instance_password
-      apps     = join(",", setsubtract(local.apps, [local.traffic_gen.accounting_qa.name]))
-      data     = join(",", local.data)
-      shared   = join(",", local.shared)
+      apps     = join(",", setsubtract(local.all_workloads, [local.traffic_gen.accounting_qa.name]))
       external = join(",", local.external)
       interval = local.traffic_gen.accounting_qa.interval
   })
@@ -103,9 +99,7 @@ module "accounting_prod" {
       name     = local.traffic_gen.accounting_prod.name
       domain   = "demo.aviatrixtest.com"
       password = var.workload_instance_password
-      apps     = join(",", setsubtract(local.apps, [local.traffic_gen.accounting_prod.name]))
-      data     = join(",", local.data)
-      shared   = join(",", local.shared)
+      apps     = join(",", setsubtract(local.all_workloads, [local.traffic_gen.accounting_prod.name]))
       external = join(",", local.external)
       interval = local.traffic_gen.accounting_prod.interval
   })
@@ -143,9 +137,7 @@ module "engineering_dev" {
       name     = local.traffic_gen.engineering_dev.name
       domain   = "demo.aviatrixtest.com"
       password = var.workload_instance_password
-      apps     = join(",", setsubtract(local.apps, [local.traffic_gen.engineering_dev.name]))
-      data     = join(",", local.data)
-      shared   = join(",", local.shared)
+      apps     = join(",", setsubtract(local.all_workloads, [local.traffic_gen.engineering_dev.name]))
       external = join(",", local.external)
       interval = local.traffic_gen.engineering_dev.interval
   })
@@ -183,9 +175,7 @@ module "engineering_qa" {
       name     = local.traffic_gen.engineering_qa.name
       domain   = "demo.aviatrixtest.com"
       password = var.workload_instance_password
-      apps     = join(",", setsubtract(local.apps, [local.traffic_gen.accounting_qa.name]))
-      data     = join(",", local.data)
-      shared   = join(",", local.shared)
+      apps     = join(",", setsubtract(local.all_workloads, [local.traffic_gen.accounting_qa.name]))
       external = join(",", local.external)
       interval = local.traffic_gen.engineering_qa.interval
   })
@@ -223,9 +213,7 @@ module "engineering_prod" {
       name     = local.traffic_gen.engineering_prod.name
       domain   = "demo.aviatrixtest.com"
       password = var.workload_instance_password
-      apps     = join(",", setsubtract(local.apps, [local.traffic_gen.engineering_prod.name]))
-      data     = join(",", local.data)
-      shared   = join(",", local.shared)
+      apps     = join(",", setsubtract(local.all_workloads, [local.traffic_gen.engineering_prod.name]))
       external = join(",", local.external)
       interval = local.traffic_gen.engineering_prod.interval
   })
@@ -263,9 +251,7 @@ module "marketing_dev" {
       name     = local.traffic_gen.marketing_dev.name
       domain   = "demo.aviatrixtest.com"
       password = var.workload_instance_password
-      apps     = join(",", setsubtract(local.apps, [local.traffic_gen.marketing_dev.name]))
-      data     = join(",", local.data)
-      shared   = join(",", local.shared)
+      apps     = join(",", setsubtract(local.all_workloads, [local.traffic_gen.marketing_dev.name]))
       external = join(",", local.external)
       interval = local.traffic_gen.marketing_dev.interval
   })
@@ -300,9 +286,7 @@ module "marketing_qa" {
       name     = local.traffic_gen.marketing_qa.name
       domain   = "demo.aviatrixtest.com"
       password = var.workload_instance_password
-      apps     = join(",", setsubtract(local.apps, [local.traffic_gen.marketing_qa.name]))
-      data     = join(",", local.data)
-      shared   = join(",", local.shared)
+      apps     = join(",", setsubtract(local.all_workloads, [local.traffic_gen.marketing_qa.name]))
       external = join(",", local.external)
       interval = local.traffic_gen.marketing_qa.interval
   })
@@ -337,9 +321,7 @@ module "marketing_prod" {
       name     = local.traffic_gen.marketing_prod.name
       domain   = "demo.aviatrixtest.com"
       password = var.workload_instance_password
-      apps     = join(",", setsubtract(local.apps, [local.traffic_gen.marketing_prod.name]))
-      data     = join(",", local.data)
-      shared   = join(",", local.shared)
+      apps     = join(",", setsubtract(local.all_workloads, [local.traffic_gen.marketing_prod.name]))
       external = join(",", local.external)
       interval = local.traffic_gen.marketing_prod.interval
   })
@@ -352,4 +334,132 @@ resource "aws_route53_record" "marketing_prod" {
   type    = "A"
   ttl     = "1"
   records = [local.traffic_gen.marketing_prod.private_ip]
+}
+
+module "operations_shared" {
+  source               = "./mc-instance"
+  cloud                = "oci"
+  name                 = local.traffic_gen.operations_shared.name
+  oci_compartment_ocid = var.oci_operations_compartment_ocid
+  oci_vcn_ocid         = module.spokes["${var.oci_operations_account_name}-shared"].vpc.vpc_id
+  subnet_id            = module.spokes["${var.oci_operations_account_name}-shared"].vpc.private_subnets[0].subnet_id
+  password             = var.workload_instance_password
+  private_ip           = local.traffic_gen.operations_shared.private_ip
+  common_tags = merge(var.common_tags, {
+    Department  = "operations"
+    Application = "shared"
+    Environment = "shared"
+  })
+
+  user_data_templatefile = templatefile("${var.workload_template_path}/oci.tpl",
+    {
+      name     = local.traffic_gen.operations_shared.name
+      domain   = "demo.aviatrixtest.com"
+      password = var.workload_instance_password
+  })
+  depends_on = [module.spokes]
+}
+
+resource "aws_route53_record" "operations_shared" {
+  zone_id = data.aws_route53_zone.demo.zone_id
+  name    = "${local.traffic_gen.operations_shared.name}.${data.aws_route53_zone.demo.name}"
+  type    = "A"
+  ttl     = "1"
+  records = [local.traffic_gen.operations_shared.private_ip]
+}
+
+module "enterprise_data_dev" {
+  source     = "./mc-instance"
+  cloud      = "gcp"
+  name       = local.traffic_gen.enterprise_data_dev.name
+  vpc_id     = module.spokes["${var.gcp_enterprise_data_account_name}-dev"].vpc.name
+  subnet_id  = module.spokes["${var.gcp_enterprise_data_account_name}-dev"].vpc.subnets[0].name
+  region     = module.spokes["${var.gcp_enterprise_data_account_name}-dev"].vpc.subnets[0].region
+  password   = var.workload_instance_password
+  private_ip = local.traffic_gen.enterprise_data_dev.private_ip
+  common_tags = merge(var.common_tags, {
+    Department  = "enterprise data"
+    Application = "data"
+    Environment = "dev"
+  })
+
+  user_data_templatefile = templatefile("${var.workload_template_path}/gcp.tpl",
+    {
+      name     = local.traffic_gen.enterprise_data_dev.name
+      domain   = "demo.aviatrixtest.com"
+      password = var.workload_instance_password
+  })
+  depends_on = [module.spokes]
+}
+
+resource "aws_route53_record" "enterprise_data_dev" {
+  zone_id = data.aws_route53_zone.demo.zone_id
+  name    = "${local.traffic_gen.enterprise_data_dev.name}.${data.aws_route53_zone.demo.name}"
+  type    = "A"
+  ttl     = "1"
+  records = [local.traffic_gen.enterprise_data_dev.private_ip]
+}
+
+module "enterprise_data_qa" {
+  source     = "./mc-instance"
+  cloud      = "gcp"
+  name       = local.traffic_gen.enterprise_data_qa.name
+  vpc_id     = module.spokes["${var.gcp_enterprise_data_account_name}-qa"].vpc.name
+  subnet_id  = module.spokes["${var.gcp_enterprise_data_account_name}-qa"].vpc.subnets[0].name
+  region     = module.spokes["${var.gcp_enterprise_data_account_name}-qa"].vpc.subnets[0].region
+  password   = var.workload_instance_password
+  private_ip = local.traffic_gen.enterprise_data_qa.private_ip
+  common_tags = merge(var.common_tags, {
+    Department  = "enterprise data"
+    Application = "data"
+    Environment = "qa"
+  })
+
+  user_data_templatefile = templatefile("${var.workload_template_path}/gcp.tpl",
+    {
+      name     = local.traffic_gen.enterprise_data_qa.name
+      domain   = "demo.aviatrixtest.com"
+      password = var.workload_instance_password
+  })
+  depends_on = [module.spokes]
+}
+
+resource "aws_route53_record" "enterprise_data_qa" {
+  zone_id = data.aws_route53_zone.demo.zone_id
+  name    = "${local.traffic_gen.enterprise_data_qa.name}.${data.aws_route53_zone.demo.name}"
+  type    = "A"
+  ttl     = "1"
+  records = [local.traffic_gen.enterprise_data_qa.private_ip]
+}
+
+module "enterprise_data_prod" {
+  source     = "./mc-instance"
+  cloud      = "gcp"
+  name       = local.traffic_gen.enterprise_data_prod.name
+  vpc_id     = module.spokes["${var.gcp_enterprise_data_account_name}-prod"].vpc.name
+  subnet_id  = module.spokes["${var.gcp_enterprise_data_account_name}-prod"].vpc.subnets[0].name
+  region     = module.spokes["${var.gcp_enterprise_data_account_name}-prod"].vpc.subnets[0].region
+  password   = var.workload_instance_password
+  private_ip = local.traffic_gen.enterprise_data_prod.private_ip
+  common_tags = merge(var.common_tags, {
+    Department  = "enterprise data"
+    Application = "data"
+    Environment = "prod"
+  })
+
+  user_data_templatefile = templatefile("${var.workload_template_path}/gcp.tpl",
+    {
+      name     = local.traffic_gen.enterprise_data_prod.name
+      domain   = "demo.aviatrixtest.com"
+      password = var.workload_instance_password
+  })
+  depends_on = [module.spokes]
+}
+
+resource "aws_route53_record" "enterprise_data_prod" {
+  zone_id = data.aws_route53_zone.demo.zone_id
+  name    = "${local.traffic_gen.enterprise_data_prod.name}.${data.aws_route53_zone.demo.name}"
+  type    = "A"
+  ttl     = "1"
+  records = [local.traffic_gen.enterprise_data_prod.private_ip]
 }

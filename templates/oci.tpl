@@ -10,19 +10,21 @@ sudo service sshd restart
 # Set logging
 exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 # Update packages
-sudo apt update -y
-sudo apt -y install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-sudo apt update -y
-sudo apt-get install sshpass -y
-sudo apt-get install cron -y
+sudo DEBIAN_FRONTEND=noninteractive apt-get clean
+sudo DEBIAN_FRONTEND=noninteractive apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
+sudo DEBIAN_FRONTEND=noninteractive apt-get install nginx -y
+
+# Update the domain suffix
+sed -i '$d' /etc/netplan/50-cloud-init.yaml
+echo "            nameservers:" >> /etc/netplan/50-cloud-init.yaml
+echo "               search: [${domain}]" >> /etc/netplan/50-cloud-init.yaml
+netplan apply
 
 # SAP mock
 echo "server {
     listen 443;
     listen 514;
-    listen 5000;
+    listen 1521;
     listen 8443;
     listen 30000-30041; 
     listen 50010;
@@ -39,3 +41,8 @@ echo "server {
 }" > /etc/nginx/conf.d/default.conf
 
 service nginx restart
+
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 8443 -j ACCEPT
+sudo netfilter-persistent save
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 1521 -j ACCEPT
+sudo netfilter-persistent save

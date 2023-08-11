@@ -19,8 +19,8 @@ terraform {
       configuration_aliases = [google.operations]
     }
     oci = {
-      source  = "hashicorp/oci"
-      version = "~> 4.107.0"
+      source  = "oracle/oci"
+      version = "~> 5.8.0"
     }
   }
   required_version = ">= 1.5.0"

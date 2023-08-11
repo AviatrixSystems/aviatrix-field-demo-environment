@@ -21,6 +21,23 @@ resource "aviatrix_rbac_group" "ops" {
   group_name = "operations"
 }
 
+resource "aviatrix_rbac_group" "employees_all" {
+  group_name = "O365-Employees-All"
+}
+
+resource "aviatrix_rbac_group" "aviatrix_demo_controller_admins" {
+  group_name = "Aviatrix Demo Controller Admins"
+}
+
+resource "aviatrix_rbac_group" "aviatrix_demo_controller_guests" {
+  group_name = "Aviatrix Demo Controller Guests"
+}
+
+resource "aviatrix_rbac_group_permission_attachment" "aviatrix_demo_controller_admins" {
+  group_name      = aviatrix_rbac_group.aviatrix_demo_controller_admins.group_name
+  permission_name = "all_write"
+}
+
 resource "aviatrix_rbac_group_permission_attachment" "network" {
   group_name      = aviatrix_rbac_group.network.group_name
   permission_name = "all_write"
@@ -192,14 +209,14 @@ resource "aviatrix_account" "enterprise_data_gcp" {
   account_name                        = local.tfvars.gcp_enterprise_data_account_name
   cloud_type                          = 4
   gcloud_project_id                   = local.tfvars.gcp_enterprise_data_project_id
-  gcloud_project_credentials_filepath = local.tfvars.gcp_credentials_filepath
+  gcloud_project_credentials_filepath = "${path.module}/../avx-field-demo.json"
 }
 
 resource "aviatrix_account" "operations_gcp" {
   account_name                        = local.tfvars.gcp_operations_account_name
   cloud_type                          = 4
   gcloud_project_id                   = local.tfvars.gcp_operations_project_id
-  gcloud_project_credentials_filepath = local.tfvars.gcp_credentials_filepath
+  gcloud_project_credentials_filepath = "${path.module}/../avx-field-demo.json"
 }
 
 resource "aviatrix_account" "operations_oci" {

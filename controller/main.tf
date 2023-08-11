@@ -25,7 +25,7 @@ resource "aws_cloudformation_stack" "avx_ctrl_cplt" {
     VpcCidr                     = var.vpc_cidr
   }
   lifecycle {
-    ignore_changes = [parameters["AdminPassword"], parameters["AdminPasswordConfirm"]]
+    ignore_changes = [parameters["AdminPassword"], parameters["AdminPasswordConfirm"], parameters["AllowedHttpsIngressIpParam"]]
   }
 }
 

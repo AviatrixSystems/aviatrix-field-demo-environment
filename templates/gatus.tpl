@@ -50,61 +50,43 @@ done
 for endpoint in $(echo ${apps}|tr "," "\n");
 do 
     sudo cat >> config.yaml << EOL
-    - name: $endpoint-icmp
-      url: "icmp://$endpoint"
-      interval: ${interval}s
-      group: "${name} [lan]"
-      conditions:
-      - "[CONNECTED] == true"
-    - name: $endpoint-https
+    - name: $endpoint-443
       url: "tcp://$endpoint:443"
       interval: ${interval}s
-      group: "${name} [lan]"
+      group: "${name} [apps]"
       conditions:
       - "[CONNECTED] == true"
-EOL
-done
-
-for endpoint in $(echo ${shared}|tr "," "\n");
-do 
-    sudo cat >> config.yaml << EOL
-    - name: $endpoint-https
-      url: "tcp://$endpoint:443"
+    - name: $endpoint-8443
+      url: "tcp://$endpoint:8443"
       interval: ${interval}s
       group: "${name} [shared]"
       conditions:
       - "[CONNECTED] == true"
-EOL
-done
-
-for endpoint in $(echo ${data}|tr "," "\n");
-do 
-    sudo cat >> config.yaml << EOL
-    - name: "$endpoint-data-30005"
-      url: "tcp://$endpoint:30005"
+    - name: $endpoint-1521
+      url: "tcp://$endpoint:1521"
       interval: ${interval}s
-      group: "${name} [data]"
+      group: "${name} [shared]"
       conditions:
       - "[CONNECTED] == true"
-    - name: "$endpoint-data-1433"
+    - name: "$endpoint-1433"
       url: "tcp://$endpoint:1433"
       interval: ${interval}s
       group: "${name} [data]"
       conditions:
       - "[CONNECTED] == true"
-    - name: "$endpoint-data-3306"
+    - name: "$endpoint-3306"
       url: "tcp://$endpoint:3306"
       interval: ${interval}s
       group: "${name} [data]"
       conditions:
       - "[CONNECTED] == true"
-    - name: "$endpoint-data-50010"
-      url: "tcp://$endpoint:50010"
+    - name: "$endpoint-30005"
+      url: "tcp://$endpoint:30005"
       interval: ${interval}s
       group: "${name} [data]"
       conditions:
       - "[CONNECTED] == true"
-    - name: "$endpoint-data-50100"
+    - name: "$endpoint-50100"
       url: "tcp://$endpoint:50100"
       interval: ${interval}s
       group: "${name} [data]"
@@ -118,7 +100,7 @@ sudo sed -i 's/80/81/g' /etc/nginx/sites-available/default
 echo "server {
     listen 443;
     listen 514;
-    listen 5000;
+    listen 1521;
     listen 8443;
     listen 30000-30041; 
     listen 50010;

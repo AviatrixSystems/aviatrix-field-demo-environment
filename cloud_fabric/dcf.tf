@@ -126,6 +126,24 @@ resource "aviatrix_smart_group" "prod" {
   }
 }
 
+resource "aviatrix_smart_group" "shared" {
+  name = "shared"
+  selector {
+    match_expressions {
+      cidr = "10.3.2.0/24"
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "edge" {
+  name = "edge"
+  selector {
+    match_expressions {
+      cidr = "10.40.251.0/24"
+    }
+  }
+}
+
 resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
   policies {
     name     = "allow-internet-http"
@@ -212,35 +230,80 @@ resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
     ]
   }
   policies {
-    name     = "application-deny-all"
-    action   = "DENY"
-    priority = 10000
-    protocol = "Any"
-    logging  = true
-    watch    = false
+    name     = "allow-shared"
+    action   = "PERMIT"
+    priority = 500
+    protocol = "TCP"
+    port_ranges {
+      lo = 8443
+    }
+    port_ranges {
+      lo = 1521
+    }
+    logging = true
+    watch   = false
     src_smart_groups = [
       aviatrix_smart_group.dev.uuid,
-      aviatrix_smart_group.qa.uuid,
-      aviatrix_smart_group.prod.uuid
+      aviatrix_smart_group.prod.uuid,
+      aviatrix_smart_group.qa.uuid
     ]
     dst_smart_groups = [
-      aviatrix_smart_group.dev.uuid,
-      aviatrix_smart_group.qa.uuid,
-      aviatrix_smart_group.prod.uuid
+      aviatrix_smart_group.shared.uuid
     ]
   }
   policies {
-    name     = "deny-internet-all"
+    name     = "allow-edge"
+    action   = "PERMIT"
+    priority = 600
+    protocol = "TCP"
+    port_ranges {
+      lo = 80
+      hi = 82
+    }
+    port_ranges {
+      lo = 22
+    }
+    logging = true
+    watch   = false
+    src_smart_groups = [
+      aviatrix_smart_group.edge.uuid
+    ]
+    dst_smart_groups = [
+      aviatrix_smart_group.dev.uuid,
+      aviatrix_smart_group.prod.uuid,
+      aviatrix_smart_group.qa.uuid
+    ]
+  }
+  # policies {
+  #   name     = "application-deny-all"
+  #   action   = "DENY"
+  #   priority = 10000
+  #   protocol = "Any"
+  #   logging  = true
+  #   watch    = false
+  #   src_smart_groups = [
+  #     aviatrix_smart_group.dev.uuid,
+  #     aviatrix_smart_group.qa.uuid,
+  #     aviatrix_smart_group.prod.uuid
+  #   ]
+  #   dst_smart_groups = [
+  #     aviatrix_smart_group.dev.uuid,
+  #     aviatrix_smart_group.qa.uuid,
+  #     aviatrix_smart_group.prod.uuid
+  #   ]
+  # }
+  policies {
+    name     = "default-deny-all"
     action   = "DENY"
     priority = 2147483646
     protocol = "Any"
     logging  = true
     watch    = false
     src_smart_groups = [
-      aviatrix_smart_group.rfc1918.uuid
+      "def000ad-0000-0000-0000-000000000000" # Anywhere
     ]
     dst_smart_groups = [
-      "def000ad-0000-0000-0000-000000000001" # Public Internet
+      "def000ad-0000-0000-0000-000000000000" # Anywhere
     ]
   }
   policies {
