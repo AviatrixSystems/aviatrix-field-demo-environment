@@ -10,8 +10,8 @@ terraform {
     }
     aws = {
       source                = "hashicorp/aws"
-      version               = "~> 4.54.0"
-      configuration_aliases = [aws.accounting, aws.engineering, aws.palo]
+      version               = "~> 5.12.0"
+      configuration_aliases = [aws.accounting, aws.engineering, aws.onprem, aws.palo]
     }
     google = {
       source                = "hashicorp/google"

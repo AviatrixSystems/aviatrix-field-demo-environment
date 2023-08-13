@@ -27,6 +27,12 @@ provider "aws" {
   region  = var.transit_aws_region
 }
 
+provider "aws" {
+  alias   = "onprem"
+  profile = "demo_operations"
+  region  = var.onprem_region
+}
+
 provider "google" {
   credentials = local.tfvars.gcp_credentials_filepath
   project     = local.tfvars.gcp_enterprise_data_project_id

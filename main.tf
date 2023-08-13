@@ -31,6 +31,8 @@ module "demo" {
   oci_operations_account_name      = "operations-oci"
   palo_bootstrap_path              = "./palo_bootstrap"
   workload_template_path           = "./templates"
+  onprem_region                    = var.onprem_region
+  s2c_shared_secret                = local.tfvars.s2c_shared_secret
   edge_gcp_region                  = var.edge_gcp_region
   oci_operations_compartment_ocid  = local.tfvars.oci_operations_compartment_ocid
   palo_admin_password              = local.tfvars.palo_admin_password
@@ -51,6 +53,7 @@ module "demo" {
     aws.accounting    = aws.accounting
     aws.engineering   = aws.engineering
     aws.palo          = aws.palo
+    aws.onprem        = aws.onprem
     google.operations = google.operations
   }
 }

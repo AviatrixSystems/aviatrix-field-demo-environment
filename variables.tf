@@ -8,6 +8,11 @@ locals {
   )
 }
 
+variable "onprem_region" {
+  description = "Aws onprem region"
+  default     = "sa-east-1"
+}
+
 variable "transit_aws_palo_firenet_region" {
   description = "Aws transit region with palo alto firenet"
   default     = "us-east-1"

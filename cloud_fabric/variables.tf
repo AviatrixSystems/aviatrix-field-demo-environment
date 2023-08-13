@@ -81,6 +81,11 @@ locals {
 
   edge_prefix = "sv-metro-equinix-demo"
 
+  cidrs = {
+    onprem      = "10.5.2.0/24"
+    avx_landing = "10.7.2.0/24"
+  }
+
   external = [
     "aws.amazon.com",
     "azure.microsoft.com/en-us",
@@ -218,6 +223,15 @@ variable "palo_admin_password" {
 
 variable "workload_instance_password" {
   description = "Password for the workload instances"
+}
+
+variable "onprem_region" {
+  description = "Aws onprem region"
+  default     = "sa-east-1"
+}
+
+variable "s2c_shared_secret" {
+  description = "Shared secret or s2c ipsec tunnels"
 }
 
 variable "transit_aws_palo_firenet_region" {
