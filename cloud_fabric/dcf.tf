@@ -90,6 +90,24 @@ resource "aviatrix_smart_group" "dev" {
   }
 }
 
+resource "aviatrix_smart_group" "dev_data" {
+  name = "dev-data"
+  selector {
+    match_expressions {
+      type = "vm"
+      tags = {
+        Environment = "dev-data"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        environment = "dev-data"
+      }
+    }
+  }
+}
+
 resource "aviatrix_smart_group" "qa" {
   name = "qa"
   selector {
@@ -108,6 +126,24 @@ resource "aviatrix_smart_group" "qa" {
   }
 }
 
+resource "aviatrix_smart_group" "qa_data" {
+  name = "qa-data"
+  selector {
+    match_expressions {
+      type = "vm"
+      tags = {
+        Environment = "qa-data"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        environment = "qa-data"
+      }
+    }
+  }
+}
+
 resource "aviatrix_smart_group" "prod" {
   name = "prod"
   selector {
@@ -121,6 +157,24 @@ resource "aviatrix_smart_group" "prod" {
       type = "vm"
       tags = {
         environment = "prod"
+      }
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "prod_data" {
+  name = "prod-data"
+  selector {
+    match_expressions {
+      type = "vm"
+      tags = {
+        Environment = "prod-data"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        environment = "prod-data"
       }
     }
   }
@@ -190,9 +244,12 @@ resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
     name     = "allow-dev"
     action   = "PERMIT"
     priority = 200
-    protocol = "Any"
+    protocol = "TCP"
     logging  = true
     watch    = false
+    port_ranges {
+      lo = 443
+    }
     src_smart_groups = [
       aviatrix_smart_group.dev.uuid
     ]
@@ -200,33 +257,116 @@ resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
       aviatrix_smart_group.dev.uuid
     ]
   }
-
+  policies {
+    name     = "allow-dev-data"
+    action   = "PERMIT"
+    priority = 250
+    protocol = "TCP"
+    logging  = true
+    watch    = false
+    port_ranges {
+      lo = 1433
+    }
+    port_ranges {
+      lo = 3306
+    }
+    port_ranges {
+      lo = 30005
+    }
+    port_ranges {
+      lo = 50100
+    }
+    src_smart_groups = [
+      aviatrix_smart_group.dev.uuid
+    ]
+    dst_smart_groups = [
+      aviatrix_smart_group.dev_data.uuid
+    ]
+  }
   policies {
     name     = "allow-qa"
     action   = "PERMIT"
     priority = 300
-    protocol = "Any"
+    protocol = "TCP"
     logging  = true
     watch    = false
+    port_ranges {
+      lo = 443
+    }
     src_smart_groups = [
       aviatrix_smart_group.qa.uuid
     ]
     dst_smart_groups = [
       aviatrix_smart_group.qa.uuid
+    ]
+  }
+  policies {
+    name     = "allow-qa-data"
+    action   = "PERMIT"
+    priority = 350
+    protocol = "TCP"
+    logging  = true
+    watch    = false
+    port_ranges {
+      lo = 1433
+    }
+    port_ranges {
+      lo = 3306
+    }
+    port_ranges {
+      lo = 30005
+    }
+    port_ranges {
+      lo = 50100
+    }
+    src_smart_groups = [
+      aviatrix_smart_group.qa.uuid
+    ]
+    dst_smart_groups = [
+      aviatrix_smart_group.qa_data.uuid
     ]
   }
   policies {
     name     = "allow-prod"
     action   = "PERMIT"
     priority = 400
-    protocol = "Any"
+    protocol = "TCP"
     logging  = true
     watch    = false
+    port_ranges {
+      lo = 443
+    }
     src_smart_groups = [
       aviatrix_smart_group.prod.uuid
     ]
     dst_smart_groups = [
       aviatrix_smart_group.prod.uuid
+    ]
+  }
+  policies {
+    name     = "allow-prod-data"
+    action   = "PERMIT"
+    priority = 450
+    protocol = "TCP"
+    logging  = true
+    watch    = false
+    port_ranges {
+      lo = 1433
+    }
+    port_ranges {
+      lo = 3306
+    }
+    port_ranges {
+      lo = 30005
+    }
+    port_ranges {
+      lo = 50100
+    }
+    src_smart_groups = [
+      aviatrix_smart_group.prod.uuid
+    ]
+    dst_smart_groups = [
+      aviatrix_smart_group.prod_data.uuid
     ]
   }
   policies {
@@ -245,7 +385,8 @@ resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
     src_smart_groups = [
       aviatrix_smart_group.dev.uuid,
       aviatrix_smart_group.prod.uuid,
-      aviatrix_smart_group.qa.uuid
+      aviatrix_smart_group.qa.uuid,
+      aviatrix_smart_group.edge.uuid
     ]
     dst_smart_groups = [
       aviatrix_smart_group.shared.uuid
@@ -272,52 +413,6 @@ resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
       aviatrix_smart_group.dev.uuid,
       aviatrix_smart_group.prod.uuid,
       aviatrix_smart_group.qa.uuid
-    ]
-  }
-  # policies {
-  #   name     = "application-deny-all"
-  #   action   = "DENY"
-  #   priority = 10000
-  #   protocol = "Any"
-  #   logging  = true
-  #   watch    = false
-  #   src_smart_groups = [
-  #     aviatrix_smart_group.dev.uuid,
-  #     aviatrix_smart_group.qa.uuid,
-  #     aviatrix_smart_group.prod.uuid
-  #   ]
-  #   dst_smart_groups = [
-  #     aviatrix_smart_group.dev.uuid,
-  #     aviatrix_smart_group.qa.uuid,
-  #     aviatrix_smart_group.prod.uuid
-  #   ]
-  # }
-  policies {
-    name     = "default-deny-all"
-    action   = "DENY"
-    priority = 2147483646
-    protocol = "Any"
-    logging  = true
-    watch    = false
-    src_smart_groups = [
-      "def000ad-0000-0000-0000-000000000000" # Anywhere
-    ]
-    dst_smart_groups = [
-      "def000ad-0000-0000-0000-000000000000" # Anywhere
-    ]
-  }
-  policies {
-    name     = "default-allow-all"
-    action   = "PERMIT"
-    priority = 2147483647
-    protocol = "Any"
-    logging  = true
-    watch    = false
-    src_smart_groups = [
-      "def000ad-0000-0000-0000-000000000000" # Anywhere
-    ]
-    dst_smart_groups = [
-      "def000ad-0000-0000-0000-000000000000" # Anywhere
     ]
   }
   depends_on = [

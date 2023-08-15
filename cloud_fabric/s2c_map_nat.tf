@@ -106,11 +106,11 @@ module "operations_onprem" {
   source     = "./mc-instance"
   name       = "operations-onprem-app"
   vpc_id     = module.vpc.vpc_id
-  subnet_id  = module.vpc.private_subnets[0]
+  subnet_id  = module.vpc.public_subnets[0]
   cloud      = "aws"
   public_key = var.public_key
   password   = var.workload_instance_password
-  private_ip = "10.5.2.10"
+  private_ip = "10.5.2.40"
   common_tags = merge(var.common_tags, {
     Department  = "operations"
     Application = "onprem"

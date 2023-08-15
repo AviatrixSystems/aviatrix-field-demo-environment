@@ -380,7 +380,7 @@ module "enterprise_data_dev" {
   common_tags = merge(var.common_tags, {
     Department  = "enterprise data"
     Application = "data"
-    Environment = "dev"
+    Environment = "dev-data"
   })
 
   user_data_templatefile = templatefile("${var.workload_template_path}/gcp.tpl",
@@ -412,7 +412,7 @@ module "enterprise_data_qa" {
   common_tags = merge(var.common_tags, {
     Department  = "enterprise data"
     Application = "data"
-    Environment = "qa"
+    Environment = "qa-data"
   })
 
   user_data_templatefile = templatefile("${var.workload_template_path}/gcp.tpl",
@@ -444,7 +444,7 @@ module "enterprise_data_prod" {
   common_tags = merge(var.common_tags, {
     Department  = "enterprise data"
     Application = "data"
-    Environment = "prod"
+    Environment = "prod-data"
   })
 
   user_data_templatefile = templatefile("${var.workload_template_path}/gcp.tpl",
