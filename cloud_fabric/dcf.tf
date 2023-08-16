@@ -180,6 +180,15 @@ resource "aviatrix_smart_group" "prod_data" {
   }
 }
 
+resource "aviatrix_smart_group" "on_prem" {
+  name = "on-prem"
+  selector {
+    match_expressions {
+      cidr = "10.99.2.0/24"
+    }
+  }
+}
+
 resource "aviatrix_smart_group" "shared" {
   name = "shared"
   selector {
@@ -415,6 +424,62 @@ resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
       aviatrix_smart_group.qa.uuid
     ]
   }
+  policies {
+    name     = "allow-onprem"
+    action   = "PERMIT"
+    priority = 700
+    protocol = "TCP"
+    port_ranges {
+      lo = 443
+    }
+    port_ranges {
+      lo = 1521
+    }
+    port_ranges {
+      lo = 1433
+    }
+    port_ranges {
+      lo = 3306
+    }
+    port_ranges {
+      lo = 8443
+    }
+    port_ranges {
+      lo = 30005
+    }
+    port_ranges {
+      lo = 50100
+    }
+    logging = true
+    watch   = false
+    src_smart_groups = [
+      aviatrix_smart_group.on_prem.uuid
+    ]
+    dst_smart_groups = [
+      aviatrix_smart_group.dev.uuid,
+      aviatrix_smart_group.prod.uuid,
+      aviatrix_smart_group.qa.uuid,
+      aviatrix_smart_group.shared.uuid,
+      aviatrix_smart_group.dev_data.uuid,
+      aviatrix_smart_group.prod_data.uuid,
+      aviatrix_smart_group.qa_data.uuid
+    ]
+  }
+  # policies {
+  #   name                     = "default-deny-all"
+  #   action                   = "DENY"
+  #   priority                 = 2147483646
+  #   protocol                 = "Any"
+  #   logging                  = true
+  #   watch                    = false
+  #   exclude_sg_orchestration = true
+  #   src_smart_groups = [
+  #     "def000ad-0000-0000-0000-000000000000" # Anywhere
+  #   ]
+  #   dst_smart_groups = [
+  #     "def000ad-0000-0000-0000-000000000000" # Anywhere
+  #   ]
+  # }
   depends_on = [
     aviatrix_distributed_firewalling_config.demo
   ]
@@ -425,7 +490,7 @@ resource "aviatrix_distributed_firewalling_intra_vpc" "azure" {
   vpcs {
     account_name = var.azure_marketing_account_name
     vpc_id       = module.spokes["${var.azure_marketing_account_name}-all"].vpc.vpc_id
-    region       = module.spokes["${var.azure_marketing_account_name}-all"].vpc.region
+    region       = replace(lower(module.spokes["${var.azure_marketing_account_name}-all"].vpc.region), " ", "")
   }
   depends_on = [
     aviatrix_distributed_firewalling_config.demo,

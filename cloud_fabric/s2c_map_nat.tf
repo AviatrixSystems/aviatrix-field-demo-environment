@@ -111,6 +111,7 @@ module "operations_onprem" {
   public_key = var.public_key
   password   = var.workload_instance_password
   private_ip = "10.5.2.40"
+  public_ip  = true
   common_tags = merge(var.common_tags, {
     Department  = "operations"
     Application = "onprem"
@@ -124,7 +125,7 @@ module "operations_onprem" {
       password = var.workload_instance_password
       apps = join(",", [
         "10.91.2.10",
-        "10.92.2.10",
+        "10.92.2.40",
         "10.93.2.20",
         "10.94.2.10",
         "10.95.2.10"

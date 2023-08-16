@@ -3,7 +3,7 @@ data "http" "myip" {
 }
 
 module "edge" {
-  source                         = "github.com/jb-smoker/avxedgedemo"
+  source                         = "github.com/jb-smoker/avxedgedemo?ref=v3.1.1"
   admin_cidr                     = ["${chomp(data.http.myip.response_body)}/32"]
   region                         = "us-west2"
   pov_prefix                     = local.edge_prefix
@@ -31,6 +31,9 @@ module "edge" {
     module.backbone.transit["oci_${replace(lower(var.transit_oci_region), "/[ -]/", "_")}"].transit_gateway.gw_name,
     module.backbone.transit["gcp_${replace(lower(var.transit_gcp_region), "/[ -]/", "_")}"].transit_gateway.gw_name,
   ]
+  providers = {
+    google = google.operations
+  }
 }
 
 resource "null_resource" "edge" {

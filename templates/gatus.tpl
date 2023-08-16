@@ -121,7 +121,9 @@ sudo service nginx restart
 sleep 300
 # TODO: verion pin - docker pull twinproduction/gatus:v5.4.0
 sudo docker run -d --restart unless-stopped --name gatus -p 80:8080 --mount type=bind,source="$(pwd)"/config.yaml,target=/config/config.yaml twinproduction/gatus
-sudo docker run -d --restart unless-stopped --name gatus-e -p 82:8080 --mount type=bind,source="$(pwd)"/config-e.yaml,target=/config/config.yaml twinproduction/gatus
+if [ ${external} != [] ]; then
+  sudo docker run -d --restart unless-stopped --name gatus-e -p 82:8080 --mount type=bind,source="$(pwd)"/config-e.yaml,target=/config/config.yaml twinproduction/gatus
+fi
 
 # Create some malicious traffic
 curl http://testmynids.org/uid/index.html
