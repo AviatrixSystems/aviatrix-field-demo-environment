@@ -18,9 +18,9 @@ _Fig. topology_
 
 ## Repository folder structure
 
-- `controller/`
-  Example terraform to deploy a secure Aviatrix control plane accessible only via aws alb with waf rules enabled.
-- `controller_config/`
+- `platform/`
+  Example terraform to deploy a secure Aviatrix control plane (Controller | CoPilot) accessible only via aws alb with waf rules enabled.
+- `config/`
   Example terraform to configure the environment with rbac, secondary account iam, access accounts, sso, controller label text, etc.
 - `cloud_fabric`
   Example terraform to deploy and secure multicloud networks with embedded synthetic demo traffic.
@@ -34,3 +34,4 @@ _Fig. topology_
 - Edge
 - Intra-VPC SG Orchestration
 - Overlapping S2C mapped NAT
+- Vpn (with SAML/SSO)

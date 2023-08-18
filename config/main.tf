@@ -117,6 +117,20 @@ resource "aviatrix_saml_endpoint" "aviatrix_saml_sso" {
   }
 }
 
+resource "aviatrix_saml_endpoint" "aviatrix_vpn_sso" {
+  endpoint_name                = "aviatrix_vpn_sso"
+  idp_metadata_type            = "URL"
+  idp_metadata_url             = local.tfvars.vpn_idp_metadata_url
+  custom_entity_id             = local.tfvars.vpn_custom_entity_id
+  controller_login             = false
+  custom_saml_request_template = templatefile("${path.module}/saml_request.tpl", {})
+  lifecycle {
+    ignore_changes = [
+      custom_saml_request_template
+    ]
+  }
+}
+
 # Controller label is not exposed in terraform
 data "http" "ctrl_auth" {
   provider             = http-full

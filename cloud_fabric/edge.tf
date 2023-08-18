@@ -3,7 +3,8 @@ data "http" "myip" {
 }
 
 module "edge" {
-  source                         = "github.com/jb-smoker/avxedgedemo?ref=v3.1.1"
+  source                         = "terraform-aviatrix-modules/gcp-edge-demo/aviatrix"
+  version                        = "3.1.1"
   admin_cidr                     = ["${chomp(data.http.myip.response_body)}/32"]
   region                         = "us-west2"
   pov_prefix                     = local.edge_prefix
