@@ -7,6 +7,11 @@ data "aws_acm_certificate" "asterisk_demo_aviatrixtest_com" {
   statuses = ["ISSUED"]
 }
 
+data "aws_acm_certificate" "asterisk_aviatrixtest_com" {
+  domain   = "*.aviatrixtest.com"
+  statuses = ["ISSUED"]
+}
+
 resource "aws_route53_record" "ctrl" {
   zone_id = data.aws_route53_zone.demo_aviatrixtest_com.zone_id
   name    = "ctrl"
@@ -136,12 +141,14 @@ resource "aws_lb_listener" "public_https" {
   certificate_arn   = data.aws_acm_certificate.asterisk_demo_aviatrixtest_com.arn
 
   default_action {
-    type = "fixed-response"
+    type = "redirect"
 
-    fixed_response {
-      content_type = "text/plain"
-      message_body = "Nothing to see here."
-      status_code  = "200"
+    redirect {
+      host        = "cplt.demo.aviatrixtest.com"
+      port        = "443"
+      path        = "/#{path}"
+      query       = "#{query}"
+      status_code = "HTTP_301"
     }
   }
 }
@@ -149,6 +156,11 @@ resource "aws_lb_listener" "public_https" {
 resource "aws_lb_listener_certificate" "demo_aviatrixtest_com" {
   listener_arn    = aws_lb_listener.public_https.arn
   certificate_arn = data.aws_acm_certificate.asterisk_demo_aviatrixtest_com.arn
+}
+
+resource "aws_lb_listener_certificate" "aviatrixtest_com" {
+  listener_arn    = aws_lb_listener.public_https.arn
+  certificate_arn = data.aws_acm_certificate.asterisk_aviatrixtest_com.arn
 }
 
 resource "aws_alb_listener_rule" "ctrl" {
@@ -177,6 +189,72 @@ resource "aws_alb_listener_rule" "cplt" {
   condition {
     host_header {
       values = [aws_route53_record.cplt.fqdn]
+    }
+  }
+}
+
+resource "aws_alb_listener_rule" "legacy_controller" {
+  listener_arn = aws_lb_listener.public_https.arn
+
+  action {
+    type = "redirect"
+
+    redirect {
+      host        = "ctrl.demo.aviatrixtest.com"
+      port        = "443"
+      path        = "/#{path}"
+      query       = "#{query}"
+      status_code = "HTTP_301"
+    }
+  }
+
+  condition {
+    host_header {
+      values = ["controller.aviatrixtest.com"]
+    }
+  }
+}
+
+resource "aws_alb_listener_rule" "legacy_copilot" {
+  listener_arn = aws_lb_listener.public_https.arn
+
+  action {
+    type = "redirect"
+
+    redirect {
+      host        = "cplt.demo.aviatrixtest.com"
+      port        = "443"
+      path        = "/#{path}"
+      query       = "#{query}"
+      status_code = "HTTP_301"
+    }
+  }
+
+  condition {
+    host_header {
+      values = ["copilot.aviatrixtest.com"]
+    }
+  }
+}
+
+resource "aws_alb_listener_rule" "legacy_demo" {
+  listener_arn = aws_lb_listener.public_https.arn
+
+  action {
+    type = "redirect"
+
+    redirect {
+      host        = "ctrl.demo.aviatrixtest.com"
+      port        = "443"
+      path        = "/#{path}"
+      query       = "#{query}"
+      status_code = "HTTP_301"
+    }
+  }
+
+  condition {
+    host_header {
+      values = ["demo.aviatrixtest.com"]
     }
   }
 }
