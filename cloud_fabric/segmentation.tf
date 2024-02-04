@@ -116,7 +116,7 @@ resource "aviatrix_segmentation_network_domain_connection_policy" "azure_prod" {
 # # Associations
 resource "aviatrix_segmentation_network_domain_association" "edge" {
   network_domain_name = aviatrix_segmentation_network_domain.edge.domain_name
-  attachment_name     = "${local.edge_prefix}-edge-1"
+  attachment_name     = "${local.edge_prefix}-edge-site"
   depends_on          = [module.edge]
 }
 

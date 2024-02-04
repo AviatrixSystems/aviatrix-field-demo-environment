@@ -55,8 +55,10 @@ provider "azurerm" {
 }
 
 provider "oci" {
-  region              = var.transit_oci_region
-  tenancy_ocid        = local.tfvars.oci_tenant_ocid
-  auth                = "APIKey"
-  config_file_profile = "avxlabs"
+  region       = var.transit_oci_region
+  tenancy_ocid = local.tfvars.oci_tenant_ocid
+  auth         = "APIKey"
+  user_ocid    = local.tfvars.oci_user_ocid
+  fingerprint  = local.tfvars.oci_fingerprint
+  private_key  = local.tfvars.oci_private_key
 }

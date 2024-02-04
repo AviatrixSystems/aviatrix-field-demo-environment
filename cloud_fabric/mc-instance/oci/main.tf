@@ -9,8 +9,15 @@ data "cloudinit_config" "this" {
 }
 
 data "oci_core_images" "ubuntu_22_04" {
-  compartment_id = var.oci_compartment_ocid
-  display_name   = "Canonical-Ubuntu-22.04-2023.05.19-0"
+  compartment_id   = var.oci_compartment_ocid
+  operating_system = "Canonical Ubuntu"
+  sort_by          = "TIMECREATED"
+
+  filter {
+    name   = "display_name"
+    values = ["^Canonical-Ubuntu-22.04-([\\.0-9-]+)$"]
+    regex  = true
+  }
 }
 
 resource "oci_core_network_security_group" "this" {

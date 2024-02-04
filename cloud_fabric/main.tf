@@ -31,6 +31,7 @@ module "spokes" {
   ha_gw          = false
   attached       = true
   single_ip_snat = true
+  insane_mode    = strcontains(each.key, "engineering-aws") ? true : false
 }
 
 # Public subnet filter gateway

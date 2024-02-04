@@ -75,7 +75,8 @@ locals {
       transit_cidr          = "10.5.0.0/23"
       transit_region_name   = var.transit_aws_region
       transit_asn           = 65105
-      transit_instance_size = "t3.medium"
+      transit_instance_size = "c5.xlarge"
+      transit_insane_mode   = true
     },
   }
 
