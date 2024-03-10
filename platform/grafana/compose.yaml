@@ -1,0 +1,65 @@
+services:
+  reverse:
+    container_name: proxy
+    restart: always
+    image: nginx:mainline-alpine3.18
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./nginx:/etc/nginx
+    networks:
+      - net
+      - internal
+  prometheus:
+    image: prom/prometheus:v2.50.1
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - ./prometheus:/etc/prometheus/prometheus
+      - prom_data:/prometheus/prometheus
+    networks:
+      - internal
+  grafana:
+    image: grafana/grafana:10.3.4
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana_admin_password
+      - GF_SERVER_ROOT_URL=https://grafana_fqdn
+      - GF_AUTH_AZUREAD_NAME=Azure AD
+      - GF_AUTH_AZUREAD_ENABLED=true
+      - GF_AUTH_AZUREAD_ALLOW_SIGN_UP=true
+      - GF_AUTH_AZUREAD_AUTO_LOGIN=false
+      - GF_AUTH_AZUREAD_CLIENT_ID=grafana_client_id
+      - GF_AUTH_AZUREAD_CLIENT_SECRET=grafana_client_secret
+      - GF_AUTH_AZUREAD_SCOPES=openid email profile
+      - GF_AUTH_AZUREAD_AUTH_URL=grafana_auth_url
+      - GF_AUTH_AZUREAD_TOKEN_URL=grafana_token_url
+      - GF_AUTH_AZUREAD_ALLOWED_DOMAINS=
+      - GF_AUTH_AZUREAD_ALLOWED_GROUPS=
+      - GF_AUTH_AZUREAD_ALLOWED_ORGANIZATIONS=azure_tenant_id
+      - GF_AUTH_AZUREAD_ROLE_ATTRIBUTE_STRICT=false
+      - GF_AUTH_AZUREAD_ALLOW_ASSIGN_GRAFANA_ADMIN=true
+      - GF_AUTH_AZUREAD_SKIP_ORG_ROLE_SYNC=true
+      - GF_AUTH_AZUREAD_USE_PKCE=true
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning
+      - ./grafana/dashboards:/var/lib/grafana/dashboards
+    networks:
+      - internal
+
+volumes:
+  prom_data:
+
+
+networks:
+  internal:
+  net:

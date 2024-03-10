@@ -1,0 +1,39 @@
+global:
+  scrape_interval: 1m
+  scrape_timeout: 10s
+  evaluation_interval: 1m
+scrape_configs:
+- job_name: copilot
+  honor_labels: true
+  honor_timestamps: false
+  scrape_interval: 30s
+  scrape_timeout: 10s
+  metrics_path: /metrics-api/v1/gateways
+  scheme: https
+  authorization:
+    type: Bearer
+    credentials: copilot_api_key
+  tls_config:
+    insecure_skip_verify: true
+  follow_redirects: true
+  enable_http2: true
+  static_configs:
+  - targets:
+    - copilot_fqdn
+- job_name: copilot-status
+  honor_labels: true
+  honor_timestamps: false
+  scrape_interval: 30s
+  scrape_timeout: 10s
+  metrics_path: /status-api/v1
+  scheme: https
+  authorization:
+    type: Bearer
+    credentials: copilot_api_key
+  tls_config:
+    insecure_skip_verify: true
+  follow_redirects: true
+  enable_http2: true
+  static_configs:
+  - targets:
+    - copilot_fqdn
