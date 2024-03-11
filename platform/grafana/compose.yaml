@@ -25,7 +25,7 @@ services:
     networks:
       - internal
   grafana:
-    image: grafana/grafana:10.3.4
+    image: grafana/grafana:10.4.0
     container_name: grafana
     ports:
       - 3000:3000
@@ -33,7 +33,10 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER=admin
       - GF_SECURITY_ADMIN_PASSWORD=grafana_admin_password
+      - GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/dashboard-example.json
+      # Required when front-ended by nginx
       - GF_SERVER_ROOT_URL=https://grafana_fqdn
+      # Azure AD SSO
       - GF_AUTH_AZUREAD_NAME=Azure AD
       - GF_AUTH_AZUREAD_ENABLED=true
       - GF_AUTH_AZUREAD_ALLOW_SIGN_UP=true
