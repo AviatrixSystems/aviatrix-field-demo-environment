@@ -33,7 +33,7 @@ override.tf.json
 
 # Project specific ignore
 legacy/
-*.json
+avx-field-demo.json
 palo_bootstrap/*
 *.qcow2
 *host-vm*/*
