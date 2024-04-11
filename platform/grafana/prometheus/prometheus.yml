@@ -1,12 +1,12 @@
 global:
-  scrape_interval: 1m
+  scrape_interval: 150s
   scrape_timeout: 10s
   evaluation_interval: 1m
 scrape_configs:
 - job_name: copilot
   honor_labels: true
   honor_timestamps: false
-  scrape_interval: 30s
+  scrape_interval: 150s
   scrape_timeout: 10s
   metrics_path: /metrics-api/v1/gateways
   scheme: https
@@ -23,7 +23,7 @@ scrape_configs:
 - job_name: copilot-status
   honor_labels: true
   honor_timestamps: false
-  scrape_interval: 30s
+  scrape_interval: 150s
   scrape_timeout: 10s
   metrics_path: /status-api/v1
   scheme: https
