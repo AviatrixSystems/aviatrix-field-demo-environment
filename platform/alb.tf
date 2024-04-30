@@ -2,6 +2,10 @@ data "aws_route53_zone" "demo_aviatrixtest_com" {
   name = "demo.aviatrixtest.com"
 }
 
+data "aws_route53_zone" "backbone_aviatrixtest_com" {
+  name = "backbone.aviatrixtest.com"
+}
+
 data "aws_acm_certificate" "asterisk_demo_aviatrixtest_com" {
   domain   = "*.demo.aviatrixtest.com"
   statuses = ["ISSUED"]
@@ -9,6 +13,11 @@ data "aws_acm_certificate" "asterisk_demo_aviatrixtest_com" {
 
 data "aws_acm_certificate" "asterisk_aviatrixtest_com" {
   domain   = "*.aviatrixtest.com"
+  statuses = ["ISSUED"]
+}
+
+data "aws_acm_certificate" "asterisk_backbone_aviatrixtest_com" {
+  domain   = "*.backbone.aviatrixtest.com"
   statuses = ["ISSUED"]
 }
 
@@ -25,6 +34,28 @@ resource "aws_route53_record" "ctrl" {
 
 resource "aws_route53_record" "cplt" {
   zone_id = data.aws_route53_zone.demo_aviatrixtest_com.zone_id
+  name    = "cplt"
+  type    = "A"
+  alias {
+    name                   = aws_lb.public.dns_name
+    zone_id                = aws_lb.public.zone_id
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_route53_record" "backbone_ctrl" {
+  zone_id = data.aws_route53_zone.backbone_aviatrixtest_com.zone_id
+  name    = "ctrl"
+  type    = "A"
+  alias {
+    name                   = aws_lb.public.dns_name
+    zone_id                = aws_lb.public.zone_id
+    evaluate_target_health = true
+  }
+}
+
+resource "aws_route53_record" "backbone_cplt" {
+  zone_id = data.aws_route53_zone.backbone_aviatrixtest_com.zone_id
   name    = "cplt"
   type    = "A"
   alias {
@@ -158,6 +189,11 @@ resource "aws_lb_listener_certificate" "demo_aviatrixtest_com" {
   certificate_arn = data.aws_acm_certificate.asterisk_demo_aviatrixtest_com.arn
 }
 
+resource "aws_lb_listener_certificate" "backbone_aviatrixtest_com" {
+  listener_arn    = aws_lb_listener.public_https.arn
+  certificate_arn = data.aws_acm_certificate.asterisk_backbone_aviatrixtest_com.arn
+}
+
 resource "aws_lb_listener_certificate" "aviatrixtest_com" {
   listener_arn    = aws_lb_listener.public_https.arn
   certificate_arn = data.aws_acm_certificate.asterisk_aviatrixtest_com.arn
@@ -189,6 +225,50 @@ resource "aws_alb_listener_rule" "cplt" {
   condition {
     host_header {
       values = [aws_route53_record.cplt.fqdn]
+    }
+  }
+}
+
+resource "aws_alb_listener_rule" "backbone_controller" {
+  listener_arn = aws_lb_listener.public_https.arn
+
+  action {
+    type = "redirect"
+
+    redirect {
+      host        = "ctrl.demo.aviatrixtest.com"
+      port        = "443"
+      path        = "/#{path}"
+      query       = "#{query}"
+      status_code = "HTTP_301"
+    }
+  }
+
+  condition {
+    host_header {
+      values = ["ctrl.backbone.aviatrixtest.com"]
+    }
+  }
+}
+
+resource "aws_alb_listener_rule" "backbone_copilot" {
+  listener_arn = aws_lb_listener.public_https.arn
+
+  action {
+    type = "redirect"
+
+    redirect {
+      host        = "cplt.demo.aviatrixtest.com"
+      port        = "443"
+      path        = "/#{path}"
+      query       = "#{query}"
+      status_code = "HTTP_301"
+    }
+  }
+
+  condition {
+    host_header {
+      values = ["cplt.backbone.aviatrixtest.com"]
     }
   }
 }
