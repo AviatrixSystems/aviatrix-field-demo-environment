@@ -94,6 +94,7 @@ resource "aws_instance" "grafana" {
       grafana_client_secret  = local.tfvars.grafana_client_secret
       grafana_auth_url       = local.tfvars.grafana_auth_url
       grafana_token_url      = local.tfvars.grafana_token_url
+      new_relic_api_key      = local.tfvars.new_relic_api_key
       azure_tenant_id        = local.tfvars.azure_directory_id
   })
   associate_public_ip_address = true

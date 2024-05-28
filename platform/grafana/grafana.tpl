@@ -24,3 +24,9 @@ sudo sed -i "s/grafana_fqdn/${grafana_fqdn}/g" /etc/grafana/compose.yaml
 
 cd /etc/grafana
 sudo docker-compose up -d
+
+sudo docker run -d \
+    -e CPLT_API_KEY=${copilot_api_key} \
+    -e CPLT_DOMAIN=${copilot_fqdn} \
+    -e NRIA_LICENSE_KEY=${new_relic_api_key} \
+    aviatrix/avx-new-relic:1.0.0
