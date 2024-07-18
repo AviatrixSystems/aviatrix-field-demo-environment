@@ -47,7 +47,7 @@ module "gcp" {
   subnet_id              = var.subnet_id
   user_data_templatefile = var.user_data_templatefile
   vpc_id                 = var.vpc_id
-  instance_size          = var.instance_size == null ? "n1-standard-1" : var.instance_size #"f1-micro"
+  instance_size          = var.instance_size == null ? "f1-micro" : var.instance_size # previously "n1-standard-1"
   inbound_tcp            = var.inbound_tcp
   inbound_udp            = var.inbound_udp
 }

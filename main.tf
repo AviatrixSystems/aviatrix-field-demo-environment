@@ -38,7 +38,7 @@ module "demo" {
   palo_admin_password              = local.tfvars.palo_admin_password
   palo_admin_username              = local.tfvars.ctrl_username
   palo_bucket_name                 = local.tfvars.palo_bucket_name
-  public_key                       = local.tfvars.public_key
+  public_key                       = local.tfvars.ssh_public_key
   private_key_full_path            = local.tfvars.private_key_full_path
   transit_aws_region               = var.transit_aws_region
   transit_aws_palo_firenet_region  = var.transit_aws_palo_firenet_region
@@ -65,7 +65,6 @@ resource "aviatrix_copilot_security_group_management_config" "demo" {
   region                                   = "us-west-2"
   vpc_id                                   = data.terraform_remote_state.controller.outputs.controller_vpc_id
   instance_id                              = data.terraform_remote_state.controller.outputs.copilot_instance_id
-  depends_on                               = [module.demo]
 }
 
 # Add friendly dns for the palo alto console

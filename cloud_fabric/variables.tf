@@ -1,6 +1,4 @@
 locals {
-  public_key = fileexists("~/.ssh/id_rsa.pub") ? "${file("~/.ssh/id_rsa.pub")}" : var.public_key
-
   regional_spokes = flatten([
     for region in local.backbone : [
       for avx_account, spokes in region.department_spokes : [
@@ -80,7 +78,8 @@ locals {
     },
   }
 
-  edge_prefix = "sv-metro-equinix-demo"
+  edge_prefix   = "sv-metro-equinix-demo"
+  edge_prefix_2 = "sv-metro-equinix"
 
   cidrs = {
     onprem      = "10.5.2.0/24"

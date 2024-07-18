@@ -53,6 +53,11 @@ resource "aviatrix_rbac_group_permission_attachment" "ops" {
   permission_name = "all_dashboard_write"
 }
 
+resource "aviatrix_rbac_group_permission_attachment" "employees_all" {
+  group_name      = aviatrix_rbac_group.employees_all.group_name
+  permission_name = "all_dashboard_write"
+}
+
 resource "aviatrix_account_user" "network" {
   username = "network-user"
   email    = local.tfvars.account_email

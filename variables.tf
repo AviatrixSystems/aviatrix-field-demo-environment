@@ -35,7 +35,7 @@ variable "transit_gcp_region" {
 
 variable "edge_gcp_region" {
   description = "Gcp transit region"
-  default     = "us-south1"
+  default     = "us-west2"
 }
 
 variable "transit_oci_region" {

@@ -26,7 +26,7 @@ module "spokes" {
   region         = each.value.region
   account        = each.value.avx_account
   subnet_pairs   = each.value.cloud == "azure" ? 3 : null
-  instance_size  = each.value.cloud == "aws" ? "t3.medium" : each.value.cloud == "gcp" ? "n1-standard-1" : each.value.cloud == "azure" ? "Standard_B2ms" : each.value.cloud == "oci" ? "VM.Standard2.2" : each.value.cloud == "ali" ? "ecs.g5ne.large" : null
+  instance_size  = each.value.cloud == "aws" ? "t3.medium" : each.value.cloud == "gcp" ? "n1-standard-2" : each.value.cloud == "azure" ? "Standard_B2ms" : each.value.cloud == "oci" ? "VM.Standard2.2" : each.value.cloud == "ali" ? "ecs.g5ne.large" : null
   transit_gw     = module.backbone.transit["${each.value.cloud}_${replace(lower(each.value.region), "/[ -]/", "_")}"].transit_gateway.gw_name
   ha_gw          = false
   attached       = true
