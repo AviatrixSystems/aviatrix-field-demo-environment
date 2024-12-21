@@ -16,6 +16,7 @@ module "accounting_dev" {
     Department  = "accounting"
     Application = "crm"
     Environment = "dev"
+    Tier        = "web"
   })
 
   user_data_templatefile = templatefile("${var.workload_template_path}/gatus.tpl",
@@ -54,6 +55,7 @@ module "accounting_qa" {
     Department  = "accounting"
     Application = "crm"
     Environment = "qa"
+    Tier        = "app"
   })
 
   user_data_templatefile = templatefile("${var.workload_template_path}/gatus.tpl",
@@ -92,6 +94,7 @@ module "accounting_prod" {
     Department  = "accounting"
     Application = "crm"
     Environment = "prod"
+    Tier        = "app"
   })
 
   user_data_templatefile = templatefile("${var.workload_template_path}/gatus.tpl",
@@ -130,6 +133,7 @@ module "engineering_dev" {
     Department  = "engineering"
     Application = "engineering app"
     Environment = "dev"
+    Tier        = "web"
   })
 
   user_data_templatefile = templatefile("${var.workload_template_path}/gatus.tpl",
@@ -168,6 +172,7 @@ module "engineering_qa" {
     Department  = "engineering"
     Application = "engineering app"
     Environment = "qa"
+    Tier        = "app"
   })
 
   user_data_templatefile = templatefile("${var.workload_template_path}/gatus.tpl",
@@ -206,6 +211,7 @@ module "engineering_prod" {
     Department  = "engineering"
     Application = "engineering app"
     Environment = "prod"
+    Tier        = "app"
   })
 
   user_data_templatefile = templatefile("${var.workload_template_path}/gatus.tpl",
@@ -244,6 +250,7 @@ module "marketing_dev" {
     Department  = "marketing"
     Application = "marketing app"
     Environment = "dev"
+    Tier        = "web"
   })
 
   user_data_templatefile = templatefile("${var.workload_template_path}/gatus.tpl",
@@ -279,6 +286,7 @@ module "marketing_qa" {
     Department  = "marketing"
     Application = "marketing app"
     Environment = "qa"
+    Tier        = "app"
   })
 
   user_data_templatefile = templatefile("${var.workload_template_path}/gatus.tpl",
@@ -314,6 +322,7 @@ module "marketing_prod" {
     Department  = "marketing"
     Application = "marketing app"
     Environment = "prod"
+    Tier        = "app"
   })
 
   user_data_templatefile = templatefile("${var.workload_template_path}/gatus.tpl",
@@ -381,6 +390,7 @@ module "enterprise_data_dev" {
     Department  = "enterprise data"
     Application = "data"
     Environment = "dev-data"
+    Tier        = "database"
   })
 
   user_data_templatefile = templatefile("${var.workload_template_path}/gcp.tpl",
@@ -413,6 +423,7 @@ module "enterprise_data_qa" {
     Department  = "enterprise data"
     Application = "data"
     Environment = "qa-data"
+    Tier        = "database"
   })
 
   user_data_templatefile = templatefile("${var.workload_template_path}/gcp.tpl",
@@ -445,6 +456,7 @@ module "enterprise_data_prod" {
     Department  = "enterprise data"
     Application = "data"
     Environment = "prod-data"
+    Tier        = "database"
   })
 
   user_data_templatefile = templatefile("${var.workload_template_path}/gcp.tpl",

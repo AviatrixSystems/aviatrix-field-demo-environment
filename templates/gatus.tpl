@@ -1,6 +1,6 @@
 #! /bin/bash
 sudo hostnamectl set-hostname ${name}
-sudo sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+sudo grep -r PasswordAuthentication /etc/ssh -l | xargs -n 1 sudo sed -i 's/#\s*PasswordAuthentication\s.*$/PasswordAuthentication yes/; s/^PasswordAuthentication\s*no$/PasswordAuthentication yes/'
 # Add workload user
 sudo adduser workload
 sudo echo "workload:${password}" | sudo /usr/sbin/chpasswd
@@ -14,7 +14,7 @@ sudo DEBIAN_FRONTEND=noninteractive apt-get clean
 sudo DEBIAN_FRONTEND=noninteractive apt-get update && sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
 sudo DEBIAN_FRONTEND=noninteractive apt-get install docker.io -y
 sudo DEBIAN_FRONTEND=noninteractive apt-get install nginx -y
-ksudo systemctl start docker
+sudo systemctl start docker
 sudo systemctl enable docker
 
 # Update the domain suffix

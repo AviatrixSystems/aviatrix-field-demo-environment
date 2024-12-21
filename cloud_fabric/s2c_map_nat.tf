@@ -1,9 +1,9 @@
 module "avx_landing_zone" {
   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-  version = "1.6.3"
+  version = "1.7.0"
 
   cloud                            = "aws"
-  name                             = "operations-aws-spoke-landing-zone"
+  name                             = "operations-aws-landing-zone"
   cidr                             = local.cidrs.avx_landing
   region                           = var.transit_aws_palo_firenet_region
   account                          = var.aws_operations_account_name
