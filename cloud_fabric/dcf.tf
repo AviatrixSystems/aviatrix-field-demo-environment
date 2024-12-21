@@ -72,6 +72,330 @@ resource "aviatrix_smart_group" "rfc1918" {
   }
 }
 
+resource "aviatrix_smart_group" "web" {
+  name = "web"
+  selector {
+    match_expressions {
+      type = "vm"
+      tags = {
+        Tier = "web"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        tier = "web"
+      }
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "app" {
+  name = "app"
+  selector {
+    match_expressions {
+      type = "vm"
+      tags = {
+        Tier = "app"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        tier = "app"
+      }
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "database" {
+  name = "database"
+  selector {
+    match_expressions {
+      type = "vm"
+      tags = {
+        Tier = "database"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        tier = "database"
+      }
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "crm_app" {
+  name = "crm-app"
+  selector {
+    match_expressions {
+      type = "vm"
+      tags = {
+        Application = "crm"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        application = "crm"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        Tier = "database"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        tier = "database"
+      }
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "engineering_qa" {
+  name = "engineering-qa"
+  selector {
+    match_expressions {
+      type = "vm"
+      tags = {
+        Application = "engineering app"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        application = "engineering app"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        Environment = "qa"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        environment = "qa"
+      }
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "marketing_prod" {
+  name = "marketing-prod"
+  selector {
+    match_expressions {
+      type = "vm"
+      tags = {
+        Application = "marketing app"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        application = "marketing app"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        Environment = "prod"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        environment = "prod"
+      }
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "crm_dev_web" {
+  name = "crm-dev-web"
+  selector {
+    match_expressions {
+      type = "vm"
+      tags = {
+        Application = "crm"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        application = "crm"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        Environment = "dev"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        environment = "dev"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        Tier = "web"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        tier = "web"
+      }
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "crm_dev_db" {
+  name = "crm-dev-db"
+  selector {
+    match_expressions {
+      type = "vm"
+      tags = {
+        Environment = "dev-data"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        environment = "dev-data"
+      }
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "crm_qa_app" {
+  name = "crm-qa-app"
+  selector {
+    match_expressions {
+      type = "vm"
+      tags = {
+        Application = "crm"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        application = "crm"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        Environment = "qa"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        environment = "qa"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        Tier = "app"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        tier = "app"
+      }
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "crm_qa_db" {
+  name = "crm-qa-db"
+  selector {
+    match_expressions {
+      type = "vm"
+      tags = {
+        Environment = "qa-data"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        environment = "qa-data"
+      }
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "crm_qa" {
+  name = "crm-qa"
+  selector {
+    match_expressions {
+      type = "vm"
+      tags = {
+        Application = "crm"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        application = "crm"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        Environment = "qa"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        environment = "qa"
+      }
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "crm_prod" {
+  name = "crm-prod"
+  selector {
+    match_expressions {
+      type = "vm"
+      tags = {
+        Application = "crm"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        application = "crm"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        Environment = "prod"
+      }
+    }
+    match_expressions {
+      type = "vm"
+      tags = {
+        environment = "prod"
+      }
+    }
+  }
+}
+
 resource "aviatrix_smart_group" "dev" {
   name = "dev"
   selector {
@@ -209,8 +533,8 @@ resource "aviatrix_smart_group" "edge" {
 
 resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
   policies {
-    name     = "allow-internet-http"
-    action   = "INTRUSION_DETECTION_PERMIT"
+    name     = "allow-prod"
+    action   = "PERMIT"
     priority = 0
     protocol = "TCP"
     logging  = true
@@ -218,58 +542,130 @@ resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
     port_ranges {
       lo = 80
     }
+    port_ranges {
+      lo = 443
+    }
     src_smart_groups = [
-      aviatrix_smart_group.rfc1918.uuid
+      aviatrix_smart_group.prod.uuid
     ]
     dst_smart_groups = [
-      "def000ad-0000-0000-0000-000000000001" # Public Internet
-    ]
-    web_groups = [
-      aviatrix_web_group.allow_internet_http.uuid,
-      aviatrix_web_group.allow_nids_detection.uuid,
+      aviatrix_smart_group.prod.uuid
     ]
   }
   policies {
-    name     = "allow-internet-https"
+    name     = "allow-qa"
+    action   = "PERMIT"
+    priority = 10
+    protocol = "TCP"
+    logging  = true
+    watch    = false
+    port_ranges {
+      lo = 80
+    }
+    port_ranges {
+      lo = 443
+    }
+    src_smart_groups = [
+      aviatrix_smart_group.qa.uuid
+    ]
+    dst_smart_groups = [
+      aviatrix_smart_group.qa.uuid
+    ]
+  }
+  policies {
+    name     = "allow-dev"
+    action   = "PERMIT"
+    priority = 20
+    protocol = "TCP"
+    logging  = true
+    watch    = false
+    port_ranges {
+      lo = 80
+    }
+    port_ranges {
+      lo = 443
+    }
+    src_smart_groups = [
+      aviatrix_smart_group.dev.uuid
+    ]
+    dst_smart_groups = [
+      aviatrix_smart_group.dev.uuid
+    ]
+  }
+  policies {
+    name     = "allow-prod-crm-to-marketing-app"
     action   = "PERMIT"
     priority = 100
     protocol = "TCP"
     logging  = true
     watch    = false
     port_ranges {
-      lo = 443
+      lo = 8000
+      hi = 8500
     }
     src_smart_groups = [
-      aviatrix_smart_group.rfc1918.uuid
+      aviatrix_smart_group.crm_prod.uuid
     ]
     dst_smart_groups = [
-      "def000ad-0000-0000-0000-000000000001" # Public Internet
-    ]
-    web_groups = [
-      aviatrix_web_group.allow_internet_https.uuid,
+      aviatrix_smart_group.marketing_prod.uuid
     ]
   }
   policies {
-    name     = "allow-dev"
+    name     = "allow-qa-crm-to-engineering-app"
+    action   = "PERMIT"
+    priority = 150
+    protocol = "TCP"
+    logging  = true
+    watch    = false
+    port_ranges {
+      lo = 8000
+      hi = 8500
+    }
+    src_smart_groups = [
+      aviatrix_smart_group.crm_qa.uuid
+    ]
+    dst_smart_groups = [
+      aviatrix_smart_group.engineering_qa.uuid
+    ]
+  }
+  policies {
+    name     = "allow-qa-crm-app-to-db"
     action   = "PERMIT"
     priority = 200
     protocol = "TCP"
     logging  = true
     watch    = false
     port_ranges {
-      lo = 443
+      lo = 1433
     }
     src_smart_groups = [
-      aviatrix_smart_group.dev.uuid
+      aviatrix_smart_group.crm_qa_app.uuid
     ]
     dst_smart_groups = [
-      aviatrix_smart_group.dev.uuid
+      aviatrix_smart_group.crm_qa_db.uuid
     ]
   }
   policies {
-    name     = "allow-dev-data"
+    name     = "allow-dev-crm-web-to-db"
     action   = "PERMIT"
     priority = 250
+    protocol = "TCP"
+    logging  = true
+    watch    = false
+    port_ranges {
+      lo = 3306
+    }
+    src_smart_groups = [
+      aviatrix_smart_group.crm_dev_web.uuid
+    ]
+    dst_smart_groups = [
+      aviatrix_smart_group.crm_dev_db.uuid
+    ]
+  }
+  policies {
+    name     = "allow-prod-data"
+    action   = "PERMIT"
+    priority = 425
     protocol = "TCP"
     logging  = true
     watch    = false
@@ -286,33 +682,16 @@ resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
       lo = 50100
     }
     src_smart_groups = [
-      aviatrix_smart_group.dev.uuid
+      aviatrix_smart_group.prod.uuid
     ]
     dst_smart_groups = [
-      aviatrix_smart_group.dev_data.uuid
-    ]
-  }
-  policies {
-    name     = "allow-qa"
-    action   = "PERMIT"
-    priority = 300
-    protocol = "TCP"
-    logging  = true
-    watch    = false
-    port_ranges {
-      lo = 443
-    }
-    src_smart_groups = [
-      aviatrix_smart_group.qa.uuid
-    ]
-    dst_smart_groups = [
-      aviatrix_smart_group.qa.uuid
+      aviatrix_smart_group.prod_data.uuid
     ]
   }
   policies {
     name     = "allow-qa-data"
     action   = "PERMIT"
-    priority = 350
+    priority = 450
     protocol = "TCP"
     logging  = true
     watch    = false
@@ -336,26 +715,9 @@ resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
     ]
   }
   policies {
-    name     = "allow-prod"
+    name     = "allow-dev-data"
     action   = "PERMIT"
-    priority = 400
-    protocol = "TCP"
-    logging  = true
-    watch    = false
-    port_ranges {
-      lo = 443
-    }
-    src_smart_groups = [
-      aviatrix_smart_group.prod.uuid
-    ]
-    dst_smart_groups = [
-      aviatrix_smart_group.prod.uuid
-    ]
-  }
-  policies {
-    name     = "allow-prod-data"
-    action   = "PERMIT"
-    priority = 450
+    priority = 475
     protocol = "TCP"
     logging  = true
     watch    = false
@@ -372,10 +734,10 @@ resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
       lo = 50100
     }
     src_smart_groups = [
-      aviatrix_smart_group.prod.uuid
+      aviatrix_smart_group.dev.uuid
     ]
     dst_smart_groups = [
-      aviatrix_smart_group.prod_data.uuid
+      aviatrix_smart_group.dev_data.uuid
     ]
   }
   policies {
@@ -463,6 +825,47 @@ resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
       aviatrix_smart_group.dev_data.uuid,
       aviatrix_smart_group.prod_data.uuid,
       aviatrix_smart_group.qa_data.uuid
+    ]
+  }
+  policies {
+    name     = "allow-internet-http"
+    action   = "INTRUSION_DETECTION_PERMIT"
+    priority = 1000
+    protocol = "TCP"
+    logging  = true
+    watch    = false
+    port_ranges {
+      lo = 80
+    }
+    src_smart_groups = [
+      aviatrix_smart_group.rfc1918.uuid
+    ]
+    dst_smart_groups = [
+      "def000ad-0000-0000-0000-000000000001" # Public Internet
+    ]
+    web_groups = [
+      aviatrix_web_group.allow_internet_http.uuid,
+      aviatrix_web_group.allow_nids_detection.uuid,
+    ]
+  }
+  policies {
+    name     = "allow-internet-https"
+    action   = "PERMIT"
+    priority = 1001
+    protocol = "TCP"
+    logging  = true
+    watch    = false
+    port_ranges {
+      lo = 443
+    }
+    src_smart_groups = [
+      aviatrix_smart_group.rfc1918.uuid
+    ]
+    dst_smart_groups = [
+      "def000ad-0000-0000-0000-000000000001" # Public Internet
+    ]
+    web_groups = [
+      aviatrix_web_group.allow_internet_https.uuid,
     ]
   }
   policies {

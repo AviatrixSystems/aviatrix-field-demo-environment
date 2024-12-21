@@ -30,7 +30,7 @@ module "azure" {
   resource_group         = var.resource_group
   subnet_id              = var.subnet_id
   user_data_templatefile = var.user_data_templatefile
-  instance_size          = var.instance_size == null ? "Standard_B1ls" : var.instance_size
+  instance_size          = var.instance_size == null ? "Standard_B2ats_v2" : var.instance_size
   inbound_tcp            = var.inbound_tcp
   inbound_udp            = var.inbound_udp
 }

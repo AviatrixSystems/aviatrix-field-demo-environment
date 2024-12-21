@@ -1,7 +1,7 @@
 # https://registry.terraform.io/modules/terraform-aviatrix-modules/backbone/aviatrix/latest
 module "backbone" {
   source  = "terraform-aviatrix-modules/backbone/aviatrix"
-  version = "v1.2.2"
+  version = "v1.3.1"
   global_settings = {
     transit_accounts = {
       aws   = var.aws_operations_account_name,
@@ -18,7 +18,7 @@ module "backbone" {
 module "spokes" {
   for_each = { for spoke in local.regional_spokes : "${spoke.avx_account}-${spoke.spoke}" => spoke }
   source   = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-  version  = "1.6.3"
+  version  = "1.7.0"
 
   cloud          = each.value.cloud
   name           = "${each.value.avx_account}-spoke-${each.value.spoke}"

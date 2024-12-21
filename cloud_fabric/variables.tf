@@ -78,8 +78,8 @@ locals {
     },
   }
 
-  edge_prefix   = "sv-metro-equinix-demo"
-  edge_prefix_2 = "sv-metro-equinix"
+  edge_prefix          = "sv-metro-equinix-demo"
+  edge_prefix_megaport = "lv-metro-megaport"
 
   cidrs = {
     onprem      = "10.5.2.0/24"
@@ -107,7 +107,7 @@ locals {
     accounting_dev = {
       # TODO: Calculate possibly changing region label
       private_ip = cidrhost(cidrsubnet("${trimsuffix(local.backbone.aws_us_east_1.transit_cidr, "23")}16", 8, 2), 10)
-      name       = "accounting-app-dev"
+      name       = "accounting-web-dev"
       interval   = "10"
     }
     accounting_qa = {
@@ -122,7 +122,7 @@ locals {
     }
     engineering_dev = {
       private_ip = cidrhost(cidrsubnet("${trimsuffix(local.backbone.aws_us_east_2.transit_cidr, "23")}16", 8, 2), 10)
-      name       = "engineering-app-dev"
+      name       = "engineering-web-dev"
       interval   = "10"
     }
     engineering_qa = {
@@ -137,7 +137,7 @@ locals {
     }
     marketing_dev = {
       private_ip = cidrhost(cidrsubnet("${trimsuffix(local.backbone.azure_north_europe.transit_cidr, "23")}16", 8, 2), 40)
-      name       = "marketing-app-dev"
+      name       = "marketing-web-dev"
       interval   = "10"
     }
     marketing_qa = {
