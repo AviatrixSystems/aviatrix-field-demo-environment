@@ -1,0 +1,24 @@
+services:
+  nginx:
+    image: aviatrix/avx-demo-nginx:0.0.1
+    restart: always
+    container_name: nginx-custom-container
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/nginx.crt:/etc/nginx/nginx.crt:ro
+      - ./nginx/nginx.key:/etc/nginx/nginx.key:ro
+    ports:
+      - "8443:443"
+    depends_on:
+      - sidecar
+
+  sidecar:
+    image: aviatrix/avx-demo-sidecar:0.0.1
+    restart: always
+    container_name: sidecar-service
+    ports:
+      - "8080"
+    environment:
+      - BACKEND_USERNAME=$BACKEND_USERNAME
+      - BACKEND_PASSWORD=$BACKEND_PASSWORD
+      - BACKEND_URL=$BACKEND_URL
