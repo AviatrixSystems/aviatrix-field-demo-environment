@@ -12,9 +12,9 @@ app = Flask(__name__)
 SESSIONS = {}
 
 # Example configuration: these might be environment variables or secrets
-BACKEND_USERNAME = os.getenv("COPILOT_USERNAME", "copilot_ro_user")
-BACKEND_PASSWORD = os.getenv("COPILOT_PASSWORD", "copilot_pwd")
-BACKEND_URL     = os.getenv("COPILOT_URL", "copilot_fqdn")
+BACKEND_USERNAME = os.getenv("BACKEND_USERNAME", "copilot_ro_user")
+BACKEND_PASSWORD = os.getenv("BACKEND_PASSWORD", "copilot_pwd")
+BACKEND_URL     = os.getenv("BACKEND_URL", "copilot_fqdn")
 
 SESSION_TTL = 3600  # 1 hour, for example
 
@@ -23,7 +23,7 @@ import requests
 def copilot_login(username, password, copilot_url):
     s = requests.Session()
     payload = {"username": username, "password": password}
-    r = s.post(f"https://{copilot_url}/api/login", json=payload, verify=False)
+    r = s.post(f"https://{copilot_url}/api/login", json=payload, verify=True)
 
     if r.status_code == 200:
         # The session object (s) should have both cookies if the backend sets them
