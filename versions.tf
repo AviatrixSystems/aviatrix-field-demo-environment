@@ -9,15 +9,15 @@ terraform {
   required_providers {
     aviatrix = {
       source  = "aviatrixsystems/aviatrix"
-      version = "~> 3.2.0"
+      version = "~> 8.0.0"
     }
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 5.12.0"
+      version = "~> 5.95.0"
     }
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "~> 3.43.0"
+      version = "~> 4.14.0"
     }
     google = {
       source  = "hashicorp/google"

@@ -7,6 +7,7 @@ provider "aviatrix" {
 
 provider "aws" {
   profile = "demo_operations"
+  region  = "us-west-2"
 }
 
 provider "aws" {
@@ -49,6 +50,15 @@ provider "google" {
 provider "azurerm" {
   features {}
   subscription_id = local.tfvars.azure_marketing_subscription_id
+  client_id       = local.tfvars.azure_application_id
+  client_secret   = local.tfvars.azure_application_key
+  tenant_id       = local.tfvars.azure_directory_id
+}
+
+provider "azurerm" {
+  alias = "operations"
+  features {}
+  subscription_id = local.tfvars.azure_operations_subscription_id
   client_id       = local.tfvars.azure_application_id
   client_secret   = local.tfvars.azure_application_key
   tenant_id       = local.tfvars.azure_directory_id

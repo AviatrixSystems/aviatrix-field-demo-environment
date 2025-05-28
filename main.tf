@@ -50,11 +50,12 @@ module "demo" {
   dashboard_private_key            = data.aws_s3_object.pod_key.body
   common_tags                      = local.tfvars.common_tags
   providers = {
-    aws.accounting    = aws.accounting
-    aws.engineering   = aws.engineering
-    aws.palo          = aws.palo
-    aws.onprem        = aws.onprem
-    google.operations = google.operations
+    aws.accounting     = aws.accounting
+    aws.engineering    = aws.engineering
+    aws.palo           = aws.palo
+    aws.onprem         = aws.onprem
+    azurerm.operations = azurerm.operations
+    google.operations  = google.operations
   }
 }
 
