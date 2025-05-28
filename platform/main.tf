@@ -1,7 +1,7 @@
 data "aws_caller_identity" "aws_account" {}
 
 data "http" "myip" {
-  url = "http://ifconfig.me"
+  url = "http://icanhazip.com"
 }
 
 resource "aws_cloudformation_stack" "avx_ctrl_cplt" {

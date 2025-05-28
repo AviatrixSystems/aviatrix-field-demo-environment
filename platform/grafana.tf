@@ -87,7 +87,10 @@ resource "aws_instance" "grafana" {
   user_data = templatefile("${path.module}/grafana/grafana.tpl",
     {
       copilot_api_key        = local.tfvars.copilot_api_key
+      copilot_pwd            = local.tfvars.ctrl_password
+      copilot_ro_user        = "read-only-user"
       copilot_fqdn           = aws_route53_record.cplt.fqdn
+      proxy_fqdn             = "demo.aviatrix.com"
       grafana_fqdn           = aws_route53_record.grafana.fqdn
       grafana_admin_password = local.tfvars.ctrl_password
       grafana_client_id      = local.tfvars.grafana_client_id
@@ -96,6 +99,8 @@ resource "aws_instance" "grafana" {
       grafana_token_url      = local.tfvars.grafana_token_url
       new_relic_api_key      = local.tfvars.new_relic_api_key
       azure_tenant_id        = local.tfvars.azure_directory_id
+      pendo_key_1            = local.tfvars.pendo_key_1
+      pendo_key_2            = local.tfvars.pendo_key_2
   })
   associate_public_ip_address = true
   vpc_security_group_ids      = [aws_security_group.grafana.id]
@@ -120,6 +125,11 @@ resource "aws_instance" "grafana" {
 
   provisioner "file" {
     source      = "${path.module}/grafana" # local files
+    destination = "/tmp"
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/copilot_proxy" # local files
     destination = "/tmp"
   }
 

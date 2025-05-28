@@ -132,6 +132,18 @@ resource "aviatrix_segmentation_network_domain_association" "shared" {
   attachment_name      = module.spokes["${var.oci_operations_account_name}-shared"].spoke_gateway.gw_name
 }
 
+resource "aviatrix_segmentation_network_domain_association" "shared_aks" {
+  transit_gateway_name = module.backbone.transit["azure_${replace(lower(var.transit_azure_region), "/[ -]/", "_")}"].transit_gateway.gw_name
+  network_domain_name  = aviatrix_segmentation_network_domain.shared.domain_name
+  attachment_name      = module.spoke_azure_k8s.spoke_gateway.gw_name
+}
+
+resource "aviatrix_segmentation_network_domain_association" "shared_eks" {
+  transit_gateway_name = module.backbone.transit["aws_${replace(lower(var.transit_aws_palo_firenet_region), "/[ -]/", "_")}"].transit_gateway.gw_name
+  network_domain_name  = aviatrix_segmentation_network_domain.shared.domain_name
+  attachment_name      = module.spoke_aws_k8s.spoke_gateway.gw_name
+}
+
 resource "aviatrix_segmentation_network_domain_association" "dev_aws_east_1" {
   transit_gateway_name = module.backbone.transit["aws_${replace(lower(var.transit_aws_palo_firenet_region), "/[ -]/", "_")}"].transit_gateway.gw_name
   network_domain_name  = aviatrix_segmentation_network_domain.dev.domain_name

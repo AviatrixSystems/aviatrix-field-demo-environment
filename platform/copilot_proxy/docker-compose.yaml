@@ -1,6 +1,6 @@
 services:
   nginx:
-    image: aviatrix/avx-demo-nginx:0.0.1
+    image: aviatrix/avx-demo-nginx:0.0.3
     restart: always
     container_name: nginx-custom-container
     volumes:
@@ -13,7 +13,7 @@ services:
       - sidecar
 
   sidecar:
-    image: aviatrix/avx-demo-sidecar:0.0.1
+    image: aviatrix/avx-demo-sidecar:0.0.3
     restart: always
     container_name: sidecar-service
     ports:

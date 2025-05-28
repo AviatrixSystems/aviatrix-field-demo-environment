@@ -1,9 +1,23 @@
+data "aws_route53_zone" "demo_aviatrix_com" {
+  name = "demo.aviatrix.com"
+}
+
 data "aws_route53_zone" "demo_aviatrixtest_com" {
   name = "demo.aviatrixtest.com"
 }
 
 data "aws_route53_zone" "backbone_aviatrixtest_com" {
   name = "backbone.aviatrixtest.com"
+}
+
+data "aws_acm_certificate" "asterisk_demo_aviatrix_com" {
+  domain   = "*.demo.aviatrix.com"
+  statuses = ["ISSUED"]
+}
+
+data "aws_acm_certificate" "demo_aviatrix_com" {
+  domain   = "demo.aviatrix.com"
+  statuses = ["ISSUED"]
 }
 
 data "aws_acm_certificate" "asterisk_demo_aviatrixtest_com" {
@@ -105,6 +119,16 @@ resource "aws_security_group_rule" "public_egress_ctl" {
   security_group_id = aws_security_group.public_alb.id
 }
 
+resource "aws_security_group_rule" "public_egress_proxy" {
+  type              = "egress"
+  description       = "Allows 443 outbound"
+  from_port         = 8443
+  to_port           = 8443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.public_alb.id
+}
+
 resource "aws_subnet" "controller_subnet_b" {
   vpc_id            = aws_cloudformation_stack.avx_ctrl_cplt.outputs.AviatrixVpcID
   availability_zone = "${var.aws_region}b"
@@ -182,6 +206,16 @@ resource "aws_lb_listener" "public_https" {
       status_code = "HTTP_301"
     }
   }
+}
+
+resource "aws_lb_listener_certificate" "asterisk_demo_aviatrix_com" {
+  listener_arn    = aws_lb_listener.public_https.arn
+  certificate_arn = data.aws_acm_certificate.asterisk_demo_aviatrix_com.arn
+}
+
+resource "aws_lb_listener_certificate" "demo_aviatrix_com" {
+  listener_arn    = aws_lb_listener.public_https.arn
+  certificate_arn = data.aws_acm_certificate.demo_aviatrix_com.arn
 }
 
 resource "aws_lb_listener_certificate" "demo_aviatrixtest_com" {
@@ -373,11 +407,12 @@ resource "aws_alb_target_group" "cplt" {
   })
 }
 
-resource "aws_alb_target_group_attachment" "ctrl" {
-  target_id        = aws_cloudformation_stack.avx_ctrl_cplt.outputs.AviatrixControllerInstanceID
-  target_group_arn = aws_alb_target_group.ctrl.arn
-  port             = "443"
-}
+
+# resource "aws_alb_target_group_attachment" "ctrl" {
+#   target_id        = aws_cloudformation_stack.avx_ctrl_cplt.outputs.AviatrixControllerInstanceID
+#   target_group_arn = aws_alb_target_group.ctrl.arn
+#   port             = "443"
+# }
 
 resource "aws_alb_target_group_attachment" "cplt" {
   target_id        = aws_cloudformation_stack.avx_ctrl_cplt.outputs.AviatrixCoPilotInstanceID

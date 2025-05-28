@@ -10,7 +10,7 @@ resource "aviatrix_web_group" "allow_internet_https" {
       snifilter = "*.alibabacloud.com"
     }
     match_expressions {
-      snifilter = "azure.microsoft.com"
+      snifilter = "*.microsoft.com"
     }
     match_expressions {
       snifilter = "aws.amazon.com"
@@ -35,6 +35,36 @@ resource "aviatrix_web_group" "allow_internet_https" {
     }
     match_expressions {
       snifilter = "www.oracle.com"
+    }
+    match_expressions {
+      snifilter = "*.windows.net"
+    }
+    match_expressions {
+      snifilter = "*.azureedge.net"
+    }
+    match_expressions {
+      snifilter = "*.azmk8s.io"
+    }
+    match_expressions {
+      snifilter = "*.azure.net"
+    }
+    match_expressions {
+      snifilter = "*.visualstudio.com"
+    }
+    match_expressions {
+      snifilter = "*.ghcr.io"
+    }
+    match_expressions {
+      snifilter = "*.githubusercontent.com"
+    }
+    match_expressions {
+      snifilter = "kubernetes.io"
+    }
+    match_expressions {
+      snifilter = "*.cncf.io"
+    }
+    match_expressions {
+      snifilter = "*.aks.azure.com"
     }
   }
 }
@@ -531,6 +561,94 @@ resource "aviatrix_smart_group" "edge" {
   }
 }
 
+resource "aviatrix_smart_group" "accounting_frontend_web_dev" {
+  name = "accounting-frontend-web-dev"
+  selector {
+    match_expressions {
+      type          = "k8s"
+      k8s_namespace = "frontend"
+      k8s_service   = "accounting-frontend-web-dev"
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "accounting_backend_api_dev" {
+  name = "accounting-backend-api-dev"
+  selector {
+    match_expressions {
+      type          = "k8s"
+      k8s_namespace = "backend"
+      k8s_service   = "accounting-backend-api-dev"
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "marketing_frontend_web_dev" {
+  name = "marketing-frontend-web-dev"
+  selector {
+    match_expressions {
+      type          = "k8s"
+      k8s_namespace = "frontend"
+      k8s_service   = "marketing-frontend-web-dev"
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "marketing_backend_api_dev" {
+  name = "marketing-backend-api-dev"
+  selector {
+    match_expressions {
+      type          = "k8s"
+      k8s_namespace = "backend"
+      k8s_service   = "marketing-backend-api-dev"
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "accounting_frontend_web_prod" {
+  name = "accounting-frontend-web-prod"
+  selector {
+    match_expressions {
+      type          = "k8s"
+      k8s_namespace = "frontend"
+      k8s_service   = "accounting-frontend-web-prod"
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "accounting_backend_api_prod" {
+  name = "accounting-backend-api-prod"
+  selector {
+    match_expressions {
+      type          = "k8s"
+      k8s_namespace = "backend"
+      k8s_service   = "accounting-backend-api-prod"
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "marketing_frontend_web_prod" {
+  name = "marketing-frontend-web-prod"
+  selector {
+    match_expressions {
+      type          = "k8s"
+      k8s_namespace = "frontend"
+      k8s_service   = "marketing-frontend-web-prod"
+    }
+  }
+}
+
+resource "aviatrix_smart_group" "marketing_backend_api_prod" {
+  name = "marketing-backend-api-prod"
+  selector {
+    match_expressions {
+      type          = "k8s"
+      k8s_namespace = "backend"
+      k8s_service   = "marketing-backend-api-prod"
+    }
+  }
+}
+
 resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
   policies {
     name     = "allow-prod"
@@ -663,6 +781,74 @@ resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
     ]
   }
   policies {
+    name     = "allow-k8s-dev-accounting"
+    action   = "PERMIT"
+    priority = 300
+    protocol = "TCP"
+    logging  = true
+    watch    = false
+    port_ranges {
+      lo = 443
+    }
+    src_smart_groups = [
+      aviatrix_smart_group.accounting_frontend_web_dev.uuid,
+    ]
+    dst_smart_groups = [
+      aviatrix_smart_group.accounting_backend_api_dev.uuid,
+    ]
+  }
+  policies {
+    name     = "allow-k8s-dev-marketing"
+    action   = "PERMIT"
+    priority = 310
+    protocol = "TCP"
+    logging  = true
+    watch    = false
+    port_ranges {
+      lo = 443
+    }
+    src_smart_groups = [
+      aviatrix_smart_group.marketing_frontend_web_dev.uuid,
+    ]
+    dst_smart_groups = [
+      aviatrix_smart_group.marketing_backend_api_dev.uuid,
+    ]
+  }
+  policies {
+    name     = "allow-k8s-prod-accounting"
+    action   = "PERMIT"
+    priority = 325
+    protocol = "TCP"
+    logging  = true
+    watch    = false
+    port_ranges {
+      lo = 443
+    }
+    src_smart_groups = [
+      aviatrix_smart_group.accounting_frontend_web_prod.uuid,
+    ]
+    dst_smart_groups = [
+      aviatrix_smart_group.accounting_backend_api_prod.uuid,
+    ]
+  }
+  policies {
+    name     = "allow-k8s-prod-marketing"
+    action   = "PERMIT"
+    priority = 335
+    protocol = "TCP"
+    logging  = true
+    watch    = false
+    port_ranges {
+      lo = 443
+    }
+    src_smart_groups = [
+      aviatrix_smart_group.marketing_frontend_web_prod.uuid
+    ]
+    dst_smart_groups = [
+      aviatrix_smart_group.marketing_backend_api_prod.uuid,
+    ]
+  }
+  policies {
     name     = "allow-prod-data"
     action   = "PERMIT"
     priority = 425
@@ -682,7 +868,9 @@ resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
       lo = 50100
     }
     src_smart_groups = [
-      aviatrix_smart_group.prod.uuid
+      aviatrix_smart_group.prod.uuid,
+      aviatrix_smart_group.accounting_backend_api_prod.uuid,
+      aviatrix_smart_group.marketing_backend_api_prod.uuid,
     ]
     dst_smart_groups = [
       aviatrix_smart_group.prod_data.uuid
@@ -734,7 +922,9 @@ resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
       lo = 50100
     }
     src_smart_groups = [
-      aviatrix_smart_group.dev.uuid
+      aviatrix_smart_group.dev.uuid,
+      aviatrix_smart_group.accounting_backend_api_dev.uuid,
+      aviatrix_smart_group.marketing_backend_api_dev.uuid,
     ]
     dst_smart_groups = [
       aviatrix_smart_group.dev_data.uuid
@@ -775,6 +965,9 @@ resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
     port_ranges {
       lo = 22
     }
+    port_ranges {
+      lo = 443
+    }
     logging = true
     watch   = false
     src_smart_groups = [
@@ -783,7 +976,15 @@ resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
     dst_smart_groups = [
       aviatrix_smart_group.dev.uuid,
       aviatrix_smart_group.prod.uuid,
-      aviatrix_smart_group.qa.uuid
+      aviatrix_smart_group.qa.uuid,
+      aviatrix_smart_group.accounting_backend_api_dev.uuid,
+      aviatrix_smart_group.accounting_backend_api_prod.uuid,
+      aviatrix_smart_group.marketing_backend_api_dev.uuid,
+      aviatrix_smart_group.marketing_backend_api_prod.uuid,
+      aviatrix_smart_group.accounting_frontend_web_dev.uuid,
+      aviatrix_smart_group.accounting_frontend_web_prod.uuid,
+      aviatrix_smart_group.marketing_frontend_web_dev.uuid,
+      aviatrix_smart_group.marketing_frontend_web_prod.uuid
     ]
   }
   policies {
@@ -889,16 +1090,16 @@ resource "aviatrix_distributed_firewalling_policy_list" "egress_enforce" {
 }
 
 # Security Group (SG) Orchestration - Intra-Vpc
-resource "aviatrix_distributed_firewalling_intra_vpc" "azure" {
-  vpcs {
-    account_name = var.azure_marketing_account_name
-    vpc_id       = module.spokes["${var.azure_marketing_account_name}-all"].vpc.vpc_id
-    region       = replace(lower(module.spokes["${var.azure_marketing_account_name}-all"].vpc.region), " ", "")
-  }
-  depends_on = [
-    aviatrix_distributed_firewalling_config.demo,
-    module.marketing_prod,
-    module.marketing_dev,
-    module.marketing_qa,
-  ]
-}
+# resource "aviatrix_distributed_firewalling_intra_vpc" "azure" {
+#   vpcs {
+#     account_name = var.azure_marketing_account_name
+#     vpc_id       = module.spokes["${var.azure_marketing_account_name}-all"].vpc.vpc_id
+#     region       = replace(lower(module.spokes["${var.azure_marketing_account_name}-all"].vpc.region), " ", "")
+#   }
+#   depends_on = [
+#     aviatrix_distributed_firewalling_config.demo,
+#     module.marketing_prod,
+#     module.marketing_dev,
+#     module.marketing_qa,
+#   ]
+# }

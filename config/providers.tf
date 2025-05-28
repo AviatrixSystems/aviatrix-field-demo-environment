@@ -7,14 +7,17 @@ provider "aviatrix" {
 
 provider "aws" {
   profile = "demo_operations"
+  region  = "us-west-2"
 }
 
 provider "aws" {
   alias   = "accounting"
   profile = "demo_accounting"
+  region  = "us-east-1"
 }
 
 provider "aws" {
   alias   = "engineering"
   profile = "demo_engineering"
+  region  = "us-east-1"
 }

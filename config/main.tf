@@ -22,7 +22,7 @@ resource "aviatrix_rbac_group" "ops" {
 }
 
 resource "aviatrix_rbac_group" "employees_all" {
-  group_name = "O365-Employees-All"
+  group_name = "AVX-All-O365"
 }
 
 resource "aviatrix_rbac_group" "aviatrix_demo_controller_admins" {
@@ -36,6 +36,11 @@ resource "aviatrix_rbac_group" "aviatrix_demo_controller_guests" {
 resource "aviatrix_rbac_group_permission_attachment" "aviatrix_demo_controller_admins" {
   group_name      = aviatrix_rbac_group.aviatrix_demo_controller_admins.group_name
   permission_name = "all_write"
+}
+
+resource "aviatrix_rbac_group_access_account_attachment" "aviatrix_demo_controller_admins" {
+  group_name          = aviatrix_rbac_group.aviatrix_demo_controller_admins.group_name
+  access_account_name = "all"
 }
 
 resource "aviatrix_rbac_group_permission_attachment" "network" {
@@ -56,6 +61,11 @@ resource "aviatrix_rbac_group_permission_attachment" "ops" {
 resource "aviatrix_rbac_group_permission_attachment" "employees_all" {
   group_name      = aviatrix_rbac_group.employees_all.group_name
   permission_name = "all_dashboard_write"
+}
+
+resource "aviatrix_rbac_group_access_account_attachment" "employees_all" {
+  group_name          = aviatrix_rbac_group.employees_all.group_name
+  access_account_name = "all"
 }
 
 resource "aviatrix_account_user" "network" {

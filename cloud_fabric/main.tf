@@ -1,7 +1,7 @@
 # https://registry.terraform.io/modules/terraform-aviatrix-modules/backbone/aviatrix/latest
 module "backbone" {
   source  = "terraform-aviatrix-modules/backbone/aviatrix"
-  version = "v1.3.1"
+  version = "v8.0.0"
   global_settings = {
     transit_accounts = {
       aws   = var.aws_operations_account_name,
@@ -18,7 +18,7 @@ module "backbone" {
 module "spokes" {
   for_each = { for spoke in local.regional_spokes : "${spoke.avx_account}-${spoke.spoke}" => spoke }
   source   = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-  version  = "1.7.0"
+  version  = "8.0.0"
 
   cloud          = each.value.cloud
   name           = "${each.value.avx_account}-spoke-${each.value.spoke}"
@@ -35,27 +35,27 @@ module "spokes" {
 }
 
 # Public subnet filter gateway
-data "aws_route_table" "spoke_dev_public_1" {
-  subnet_id = module.spokes["accounting-aws-dev"].vpc.public_subnets[0].subnet_id
+data "aws_route_table" "spoke_prod_public_1" {
+  subnet_id = module.spokes["accounting-aws-prod"].vpc.public_subnets[0].subnet_id
   provider  = aws.accounting
 }
 
-data "aws_route_table" "spoke_dev_public_2" {
-  subnet_id = module.spokes["accounting-aws-dev"].vpc.public_subnets[1].subnet_id
+data "aws_route_table" "spoke_prod_public_2" {
+  subnet_id = module.spokes["accounting-aws-prod"].vpc.public_subnets[1].subnet_id
   provider  = aws.accounting
 }
 
-resource "aviatrix_gateway" "accounting_psf_dev" {
+resource "aviatrix_gateway" "accounting_psf_prod" {
   cloud_type                                  = 1
   account_name                                = var.aws_accounting_account_name
-  gw_name                                     = "accounting-aws-psf-dev"
-  vpc_id                                      = module.spokes["accounting-aws-dev"].vpc.vpc_id
-  vpc_reg                                     = module.spokes["accounting-aws-dev"].vpc.region
+  gw_name                                     = "accounting-aws-psf-prod"
+  vpc_id                                      = module.spokes["accounting-aws-prod"].vpc.vpc_id
+  vpc_reg                                     = module.spokes["accounting-aws-prod"].vpc.region
   gw_size                                     = "t3.micro"
-  subnet                                      = cidrsubnet(module.spokes["accounting-aws-dev"].vpc.cidr, 2, 1)
-  zone                                        = "${module.spokes["accounting-aws-dev"].vpc.region}a"
+  subnet                                      = cidrsubnet(module.spokes["accounting-aws-prod"].vpc.cidr, 2, 1)
+  zone                                        = "${module.spokes["accounting-aws-prod"].vpc.region}a"
   enable_public_subnet_filtering              = true
-  public_subnet_filtering_route_tables        = [data.aws_route_table.spoke_dev_public_1.id, data.aws_route_table.spoke_dev_public_2.id]
+  public_subnet_filtering_route_tables        = [data.aws_route_table.spoke_prod_public_1.id, data.aws_route_table.spoke_prod_public_2.id]
   public_subnet_filtering_guard_duty_enforced = true
   single_az_ha                                = true
   enable_encrypt_volume                       = true

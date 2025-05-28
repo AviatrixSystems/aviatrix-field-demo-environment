@@ -1,6 +1,6 @@
 module "avx_landing_zone" {
   source  = "terraform-aviatrix-modules/mc-spoke/aviatrix"
-  version = "1.7.0"
+  version = "8.0.0"
 
   cloud                            = "aws"
   name                             = "operations-aws-landing-zone"

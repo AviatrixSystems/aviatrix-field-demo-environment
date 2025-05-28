@@ -1,4 +1,4 @@
-VERSION ?= 0.0.1
+VERSION ?= 0.0.7
 
 build:
 	cd sidecar && docker build --file=Dockerfile --no-cache --tag=aviatrix/avx-demo-sidecar:${VERSION} .

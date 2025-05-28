@@ -1,4 +1,42 @@
+// Function to detect mobile devices
+function isMobileDevice() {
+  return (window.innerWidth <= 768 || window.innerHeight <= 500) ||
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+document.getElementById('demoButton').addEventListener('click', function () {
+  const hiddenFields = {
+    "Email": document.getElementById("emailInput").value,
+    "DSCORGPKG__Job_Function__c": document.getElementById("roleInput").value,
+    "Industry": document.getElementById("industryInput").value
+  };
+
+  MktoForms2.getForm(3357).addHiddenFields(hiddenFields).submit();
+});
+
 document.addEventListener("DOMContentLoaded", () => {
+  // Mobile detection and message display
+  const mobileOverlay = document.getElementById("mobileOverlay");
+
+  if (isMobileDevice()) {
+    mobileOverlay.classList.remove("hidden");
+    document.body.classList.add("overflow-hidden"); // Prevent scrolling behind overlay
+  } else {
+    mobileOverlay.classList.add("hidden");
+    document.body.classList.remove("overflow-hidden");
+  }
+
+  // Also handle resize events in case user rotates device
+  window.addEventListener("resize", () => {
+    if (isMobileDevice()) {
+      mobileOverlay.classList.remove("hidden");
+      document.body.classList.add("overflow-hidden");
+    } else {
+      mobileOverlay.classList.add("hidden");
+      document.body.classList.remove("overflow-hidden");
+    }
+  });
+
   const state = {
     email: "",
     role: "",
@@ -41,29 +79,29 @@ document.addEventListener("DOMContentLoaded", () => {
       "akamai.com",
       "cloudflare.com",
       "broadcom.com",
-  ],
+    ],
     showRoles: false,
     showIndustries: false,
   };
-  
+
   // Email validation function
   function validateEmail(email) {
     // Check if it's a valid email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) return false;
-    
+
     // Check if domain is restricted
     const domain = email.split('@')[1];
     return !state.restricted_domains.includes(domain);
   }
-  
+
   // Setup email validation
   const emailInput = document.getElementById("emailInput");
   const emailError = document.createElement("div");
   emailError.className = "absolute text-red-500 text-xs mt-1 hidden";
   emailError.textContent = "Please type a valid Business email";
   emailInput.parentNode.appendChild(emailError);
-  
+
   emailInput.addEventListener("blur", () => {
     state.email = emailInput.value.trim();
     if (state.email && !validateEmail(state.email)) {
@@ -74,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
       emailInput.classList.remove("border-red-500");
     }
   });
-  
+
   emailInput.addEventListener("focus", () => {
     emailError.classList.add("hidden");
   });
@@ -193,7 +231,7 @@ document.addEventListener("DOMContentLoaded", () => {
     ), 365);
     setCookie("user_role", btoa(state.role), 365);
     setCookie("user_industry", btoa(
-        state.industry), 365);
+      state.industry), 365);
 
     // Optionally, you could set a flag indicating captive auth is complete
     setCookie("captive_auth", "1", 365);

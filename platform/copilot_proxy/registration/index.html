@@ -1,140 +1,130 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Aviatrix Interactive Demo</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Epilogue&family=Sora&display=swap"
-      rel="stylesheet"
-    />
-    <style>
-      body {
-        font-family: "Sora", sans-serif;
-      }
-      .gradient-text {
-        background: linear-gradient(90deg, #fa6b1e 0%, #f7b941 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
-      }
-      .gradient-button {
-        background: linear-gradient(90deg, #fa6b1e 0%, #f7b941 100%);
-        transition: all 0.3s ease;
-      }
-      input {
-        color: black;
-      }
-      /* Add this rule to change the text color in dropdown options to black */
-      .role-option,
-      .industry-option {
-        color: black;
-      }
-    </style>
-  </head>
-  <body class="bg-black text-black">
-    <main
-      class="flex relative flex-col justify-center items-center w-full min-h-screen py-10 bg-black overflow-y-auto"
-    >
-      <div class="absolute size-full">
-        <div
-          class="absolute top-0 left-0 bg-violet-500 rounded-full blur-[100px] h-[800px] opacity-15 translate-x-[-30%] translate-y-[-30%] w-[800px]"
-        ></div>
-        <div
-          class="absolute right-0 bottom-0 bg-orange-500 rounded-full blur-[100px] h-[600px] opacity-15 translate-x-[30%] translate-y-[30%] w-[600px]"
-        ></div>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Aviatrix Interactive Demo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Epilogue&family=Sora&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: "Sora", sans-serif;
+    }
+
+    .gradient-text {
+      background: linear-gradient(90deg, #fa6b1e 0%, #f7b941 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .gradient-button {
+      background: linear-gradient(90deg, #fa6b1e 0%, #f7b941 100%);
+      transition: all 0.3s ease;
+    }
+
+    input {
+      color: black;
+    }
+
+    /* Add this rule to change the text color in dropdown options to black */
+    .role-option,
+    .industry-option {
+      color: black;
+    }
+  </style>
+</head>
+
+<body class="bg-black text-black">
+  <div id="mobileOverlay"
+    class="hidden fixed inset-0 z-50 bg-black bg-opacity-95 flex flex-col items-center justify-center p-6 text-center">
+    <img src="Aviatrix_Logo_White_Gradient_RGB.svg" alt="Aviatrix Logo" class="w-64 mb-8">
+    <h2 class="text-3xl font-bold gradient-text mb-4">Mobile Not Supported</h2>
+    <p class="text-white text-lg mb-8">This interactive demo is designed for desktop viewing. Please return to your
+      desktop to experience Cloud Network Security that all your teams will love.</p>
+    <div class="gradient-button p-4 rounded-lg">
+      <div class="inline-block p-2 rounded bg-white">
+        <!-- Using the same CoPilot screenshot that's in your main content -->
+        <img src="CoPilot-Screenshot.png" alt="Aviatrix CoPilot Interface" class="w-64 h-auto rounded">
       </div>
+    </div>
+  </div>
+  <main class="flex relative flex-col justify-center items-center w-full min-h-screen py-10 bg-black overflow-y-auto">
+    <div class="absolute size-full">
+      <div
+        class="absolute top-0 left-0 bg-violet-500 rounded-full blur-[100px] h-[800px] opacity-15 translate-x-[-30%] translate-y-[-30%] w-[800px]">
+      </div>
+      <div
+        class="absolute right-0 bottom-0 bg-orange-500 rounded-full blur-[100px] h-[600px] opacity-15 translate-x-[30%] translate-y-[30%] w-[600px]">
+      </div>
+    </div>
 
-      <section
-        class="flex justify-between items-center px-8 w-full max-w-[1200px] max-md:flex-col max-md:gap-12"
-      >
-        <article class="flex flex-col gap-6 max-w-[600px]">
-          <h1 class="text-6xl font-bold gradient-text leading-[66px]">
-            Increase agility. 
-            Elevate security. 
-            Never compromise.
-          </h1>
-          <p class="text-base leading-6 text-stone-50">
-            Transform your cloud, networking, and security teams into business heroes with the only secure networking solution that empowers instead of restricts. 
-          </p>
-        </article>
+    <section class="flex justify-between items-center px-8 w-full max-w-[1200px] max-md:flex-col max-md:gap-12">
+      <article class="flex flex-col gap-6 max-w-[600px]">
+        <h1 class="text-6xl font-bold gradient-text leading-[66px]">
+          Increase agility.
+          Elevate security.
+          Never compromise.
+        </h1>
+        <p class="text-base leading-6 text-stone-50">
+          Transform your cloud, networking, and security teams into business heroes with the only secure networking
+          solution that empowers instead of restricts.
+        </p>
+      </article>
 
-        <aside
-          class="flex flex-col p-8 bg-white rounded-lg border border-white shadow-2xl backdrop-blur-[20px] w-[400px]"
-        >
-          <img
-            src="Aviatrix_Logo_Black_Gradient_RGB.svg"
-            alt="Logo"
-            class="mx-auto mb-6"
-          />
-          <p class="mb-2 text-base text-center text-neutral-800">
-            Experience  the Aviatrix Cloud Network Security Platform – Live 
-          </p>
-          <img
-            src="CoPilot-Screenshot.png"
-            alt="Demo Preview"
-            class="mb-6 w-full rounded border border-gray-200"
-          />
+      <aside
+        class="flex flex-col p-8 bg-white rounded-lg border border-white shadow-2xl backdrop-blur-[20px] w-[400px]">
+        <img src="Aviatrix_Logo_Black_Gradient_RGB.svg" alt="Logo" class="mx-auto mb-6" />
+        <p class="mb-2 text-base text-center text-neutral-800">
+          Experience the Aviatrix Cloud Network Security Platform – Live
+        </p>
+        <img src="CoPilot-Screenshot.png" alt="Demo Preview" class="mb-6 w-full rounded border border-gray-200" />
 
-          <form class="flex flex-col gap-2 mb-6">
-            <input
-              type="email"
-              placeholder="Business Email"
-              class="px-2 w-full h-8 text-sm rounded border border-gray-200"
-              id="emailInput"
-            />
+        <form class="flex flex-col gap-2 mb-6">
+          <input type="email" placeholder="Business Email"
+            class="px-2 w-full h-8 text-sm rounded border border-gray-200" id="emailInput" />
 
-            <div class="relative">
-              <input
-                type="text"
-                placeholder="Your Role"
-                readonly
-                class="px-2 w-full h-8 text-sm rounded border border-gray-200 cursor-pointer"
-                id="roleInput"
-              />
-              <div
-                class="absolute left-0 top-full z-10 mt-1 w-full bg-white rounded border border-gray-200 hidden"
-                id="roleDropdown"
-              >
+          <div class="relative">
+            <input type="text" placeholder="Your Role" readonly
+              class="px-2 w-full h-8 text-sm rounded border border-gray-200 cursor-pointer" id="roleInput" />
+            <div class="absolute left-0 top-full z-10 mt-1 w-full bg-white rounded border border-gray-200 hidden"
+              id="roleDropdown">
               <!-- Role options will be dynamically populated here -->
-              </div>
             </div>
+          </div>
 
-            <div class="relative">
-              <input
-                type="text"
-                placeholder="Your Industry"
-                readonly
-                class="px-2 w-full h-8 text-sm rounded border border-gray-200 cursor-pointer"
-                id="industryInput"
-              />
-              <div
-                class="absolute left-0 top-full z-10 mt-1 w-full bg-white rounded border border-gray-200 hidden"
-                id="industryDropdown"
-                >
-            
+          <div class="relative">
+            <input type="text" placeholder="Your Industry" readonly
+              class="px-2 w-full h-8 text-sm rounded border border-gray-200 cursor-pointer" id="industryInput" />
+            <div class="absolute left-0 top-full z-10 mt-1 w-full bg-white rounded border border-gray-200 hidden"
+              id="industryDropdown">
+
             </div>
-              </div>
-            </div>
-          </form>
+          </div>
+          </div>
+        </form>
 
-          <button
-            class="gradient-button w-full h-[60px] rounded-[100px] text-white font-medium"
-            id="demoButton"
-          >
-            Launch Interactive Demo
-          </button>
+        <button class="gradient-button w-full h-[60px] rounded-[100px] text-white font-medium" id="demoButton">
+          Launch Interactive Demo
+        </button>
 
-          <p class="mt-6 text-xs text-center text-neutral-400">
-            By accessing the demo, you agree to our
-            <span class="text-sky-600 cursor-pointer"> Terms of Service </span>
-            and
-            <span class="text-sky-600 cursor-pointer"> Privacy Policy</span>
-          </p>
-        </aside>
-      </section>
-    </main>
-    <script src="script.js"></script>
-  </body>
+        <p class="mt-6 text-xs text-center text-neutral-400">
+          By accessing the demo, you agree to our
+          <span class="text-sky-600 cursor-pointer"> Terms of Service </span>
+          and
+          <span class="text-sky-600 cursor-pointer"> Privacy Policy</span>
+        </p>
+        <!-- Add Marketo form here -->
+        <script src="//pages.aviatrix.com/js/forms2/js/forms2.min.js"></script>
+        <form id="mktoForm_3357" style="display: none;"></form>
+        <script>MktoForms2.loadForm("//pages.aviatrix.com", "882-LUR-510", 3357);</script>
+        <!-- End of Marketo form -->
+      </aside>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</body>
+
 </html>
