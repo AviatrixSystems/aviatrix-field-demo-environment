@@ -8,6 +8,17 @@ locals {
   )
 }
 
+data "aws_secretsmanager_secret_version" "oci_tfvars" {
+  secret_id = "demo/field/tfvars"
+  provider  = aws.oci
+}
+
+locals {
+  oci_tfvars = jsondecode(
+    data.aws_secretsmanager_secret_version.tfvars.secret_string
+  )
+}
+
 variable "aws_region" {
   default = "us-west-2"
 }

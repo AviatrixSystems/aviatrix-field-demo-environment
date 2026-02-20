@@ -14,6 +14,10 @@ terraform {
       source  = "salrashid123/http-full"
       version = "~> 1.3.1"
     }
+    oci = {
+      source  = "oracle/oci"
+      version = ">= 7.27.0"
+    }
   }
   required_version = ">= 1.5.0"
 }
